@@ -1,0 +1,230 @@
+/* 文件管理页面专用样式 */
+
+/* 文件下载标题 */
+.files-title {
+    text-align: center;
+    margin-bottom: 40px;
+    position: static;
+    width: auto;
+}
+
+.files-title .main {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.files-title .main .white {
+    color: rgb(255, 255, 255);
+}
+
+.files-title .main .highlight {
+    color: rgb(255, 101, 55);
+}
+
+.files-title .sub {
+    color: rgb(163, 163, 163);
+    font-size: 18px;
+    letter-spacing: 2px;
+}
+
+/* 文件管理区域 */
+.files-section {
+    background: #1a1a1a;
+    padding: 80px 0;
+    min-height: 800px;
+}
+
+/* 标签切换功能已移除 */
+
+/* 下载区域 */
+.download-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.search-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    align-items: center;
+}
+
+.search-input {
+    flex: 1;
+    padding: 12px 20px;
+    border: 2px solid #2d2d2d;
+    border-radius: 25px;
+    background: #2d2d2d;
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: #ff6537;
+    background: #3a3a3a;
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+.search-btn {
+    background: #ff6537;
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+    background: #ff8c69;
+    transform: translateY(-2px);
+}
+
+/* 文件网格 */
+.file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.file-card {
+    background: #2d2d2d;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.file-card:hover {
+    background: #3a3a3a;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.file-card-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.file-card h4 {
+    color: #fff;
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-card p {
+    color: #ccc;
+    margin: 0 0 15px 0;
+    font-size: 14px;
+}
+
+.file-card-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.file-card-btn {
+    background: #ff6537;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.file-card-btn:hover {
+    background: #ff8c69;
+}
+
+.file-card-btn.delete {
+    background: #dc3545;
+}
+
+.file-card-btn.delete:hover {
+    background: #c82333;
+}
+
+/* 分页 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.pagination-btn {
+    background: #2d2d2d;
+    color: #fff;
+    border: 1px solid #ff6537;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.pagination-btn:hover {
+    background: #ff6537;
+}
+
+.pagination-btn.active {
+    background: #ff6537;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .files-title .main {
+        font-size: 36px;
+    }
+    
+    .upload-area {
+        padding: 40px 20px;
+    }
+    
+    .upload-text h3 {
+        font-size: 20px;
+    }
+    
+    .file-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-bar {
+        flex-direction: column;
+    }
+    
+    .search-input {
+        width: 100%;
+    }
+    
+    .tab-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .tab-button {
+        width: 100%;
+    }
+}

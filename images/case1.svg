@@ -1,0 +1,27 @@
+<svg width="400" height="250" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6537;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#333333;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a1a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="250" fill="url(#mainGrad)"/>
+  
+  <!-- 机器人图标 -->
+  <circle cx="200" cy="100" r="40" fill="white" opacity="0.2"/>
+  <rect x="180" y="80" width="40" height="40" rx="5" fill="white" opacity="0.8"/>
+  <circle cx="190" cy="90" r="3" fill="#ff6537"/>
+  <circle cx="210" cy="90" r="3" fill="#ff6537"/>
+  <rect x="185" y="100" width="30" height="3" rx="1" fill="#ff6537"/>
+  
+  <!-- 标题文字 -->
+  <text x="200" y="160" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white" text-anchor="middle">火凤凰虚拟桌面机器人</text>
+  <text x="200" y="180" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">流星雨AI热销产品</text>
+  
+  <!-- 装饰元素 -->
+  <circle cx="80" cy="60" r="15" fill="white" opacity="0.1"/>
+  <circle cx="320" cy="190" r="20" fill="white" opacity="0.1"/>
+  <rect x="50" y="200" width="60" height="2" fill="#ff6537" opacity="0.6"/>
+  <rect x="290" y="50" width="60" height="2" fill="#ff6537" opacity="0.6"/>
+</svg>
