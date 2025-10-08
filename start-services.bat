@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 echo 启动文件管理系统服务...
 echo.
 

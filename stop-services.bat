@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 echo 停止文件管理系统服务...
 echo.
 
