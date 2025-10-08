@@ -117,6 +117,28 @@ const initSampleFiles = () => {
 // 初始化示例数据
 initSampleFiles();
 
+// 创建示例文件
+function createSampleFiles() {
+    const sampleFiles = [
+        { id: 1, fileName: 'sample1.pdf', originalName: '产品介绍.pdf' },
+        { id: 2, fileName: 'sample2.docx', originalName: '技术文档.docx' },
+        { id: 3, fileName: 'sample3.mp4', originalName: '演示视频.mp4' },
+        { id: 4, fileName: 'sample4.zip', originalName: '图片素材.zip' }
+    ];
+    
+    sampleFiles.forEach(file => {
+        const filePath = path.join(uploadDir, file.fileName);
+        if (!fs.existsSync(filePath)) {
+            // 创建示例文件内容
+            const content = `这是示例文件: ${file.originalName}\n创建时间: ${new Date().toISOString()}`;
+            fs.writeFileSync(filePath, content);
+        }
+    });
+}
+
+// 创建示例文件
+createSampleFiles();
+
 // API路由
 
 // 获取文件列表

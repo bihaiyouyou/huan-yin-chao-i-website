@@ -132,7 +132,7 @@ function createFileCard(file) {
     
     fileCard.innerHTML = `
         <div class="file-card-icon">${fileIcon}</div>
-        <h4>${file.name}</h4>
+        <h4>${file.originalName || file.name}</h4>
         <p>大小: ${fileSize}</p>
         <p>上传时间: ${file.uploadDate}</p>
         <p>下载次数: ${file.downloadCount}</p>
@@ -147,7 +147,10 @@ function createFileCard(file) {
 // 下载文件
 async function downloadFile(fileId) {
     try {
+        console.log('开始下载文件:', fileId);
         const response = await fetch(`http://localhost:3000/api/download/${fileId}`);
+        console.log('下载响应:', response.status, response.statusText);
+        
         if (response.ok) {
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
@@ -161,9 +164,10 @@ async function downloadFile(fileId) {
             
             showMessage('文件下载开始', 'success');
         } else {
-            throw new Error('下载失败');
+            throw new Error(`下载失败: ${response.status} ${response.statusText}`);
         }
     } catch (error) {
+        console.error('下载文件失败:', error);
         showMessage('下载失败: ' + error.message, 'error');
     }
 }
