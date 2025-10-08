@@ -13,6 +13,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('.')); // 提供静态文件服务
 
+// 管理页面路由
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/files.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
 // 创建上传目录
 const uploadDir = path.join(__dirname, 'uploads');
 fs.ensureDirSync(uploadDir);

@@ -13,7 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 初始化文件管理
 function initializeFileManagement() {
-    console.log('开始初始化文件下载...');
+    console.log('开始初始化文件管理...');
+    
+    // 设置上传区域
+    setupUploadArea();
+    console.log('上传区域设置完成');
     
     // 加载文件列表
     loadFiles();
@@ -24,7 +28,120 @@ function initializeFileManagement() {
     console.log('搜索功能设置完成');
 }
 
-// 上传功能已移除，只保留下载功能
+// 设置上传区域
+function setupUploadArea() {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    
+    if (!uploadArea || !fileInput) return;
+    
+    // 点击上传区域
+    uploadArea.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    // 文件选择
+    fileInput.addEventListener('change', handleFiles);
+    
+    // 拖拽上传
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('drag-over');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('drag-over');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('drag-over');
+        const files = e.dataTransfer.files;
+        handleFiles({ target: { files } });
+    });
+}
+
+// 处理文件选择
+function handleFiles(event) {
+    const files = event.target.files;
+    if (files.length === 0) return;
+    
+    showMessage(`选择了 ${files.length} 个文件`, 'info');
+    uploadFiles(files);
+}
+
+// 上传文件
+async function uploadFiles(files) {
+    const formData = new FormData();
+    
+    for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+    }
+    
+    try {
+        showProgress(true);
+        updateProgress(0, '开始上传...');
+        
+        const response = await fetch('/api/upload-multiple', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            showMessage(`成功上传 ${result.files.length} 个文件`, 'success');
+            loadFiles(); // 重新加载文件列表
+        } else {
+            throw new Error('上传失败');
+        }
+    } catch (error) {
+        showMessage('上传失败: ' + error.message, 'error');
+    } finally {
+        showProgress(false);
+    }
+}
+
+// 显示/隐藏进度条
+function showProgress(show) {
+    const progress = document.getElementById('uploadProgress');
+    if (progress) {
+        progress.style.display = show ? 'block' : 'none';
+    }
+}
+
+// 更新进度
+function updateProgress(percent, text) {
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    
+    if (progressFill) {
+        progressFill.style.width = percent + '%';
+    }
+    if (progressText) {
+        progressText.textContent = text;
+    }
+}
+
+// 标签切换
+function showTab(tabName) {
+    // 隐藏所有标签内容
+    const contents = document.querySelectorAll('.tab-content');
+    contents.forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // 移除所有按钮的活动状态
+    const buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // 显示选中的标签内容
+    document.getElementById(tabName).classList.add('active');
+    
+    // 设置对应按钮为活动状态
+    event.target.classList.add('active');
+}
 
 // 加载文件列表
 async function loadFiles() {
@@ -138,6 +255,7 @@ function createFileCard(file) {
         <p>下载次数: ${file.downloadCount}</p>
         <div class="file-card-actions">
             <button class="file-card-btn" onclick="downloadFile(${file.id})">下载</button>
+            <button class="file-card-btn delete" onclick="deleteFile(${file.id})">删除</button>
         </div>
     `;
     
@@ -172,7 +290,25 @@ async function downloadFile(fileId) {
     }
 }
 
-// 删除功能已移除，只保留下载功能
+// 删除文件
+async function deleteFile(fileId) {
+    if (confirm('确定要删除这个文件吗？')) {
+        try {
+            const response = await fetch(`/api/files/${fileId}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                showMessage('文件删除成功', 'success');
+                loadFiles(); // 重新加载文件列表
+            } else {
+                throw new Error('删除失败');
+            }
+        } catch (error) {
+            showMessage('删除失败: ' + error.message, 'error');
+        }
+    }
+}
 
 // 搜索文件
 function searchFiles() {
