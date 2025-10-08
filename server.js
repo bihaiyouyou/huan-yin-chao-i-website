@@ -174,7 +174,42 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
             file: newFile
         });
     } catch (error) {
+        console.error('上传错误:', error);
         res.status(500).json({ error: '文件上传失败: ' + error.message });
+    }
+});
+
+// 多文件上传
+app.post('/api/upload-multiple', upload.array('files', 10), (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: '没有文件上传' });
+        }
+
+        const uploadedFiles = [];
+        
+        req.files.forEach(file => {
+            const newFile = {
+                id: fileDatabase.length + 1,
+                originalName: file.originalname,
+                fileName: file.filename,
+                size: file.size,
+                type: file.mimetype,
+                uploadDate: new Date().toISOString().split('T')[0],
+                downloadCount: 0
+            };
+            
+            fileDatabase.push(newFile);
+            uploadedFiles.push(newFile);
+        });
+        
+        res.json({
+            message: `成功上传 ${uploadedFiles.length} 个文件`,
+            files: uploadedFiles
+        });
+    } catch (error) {
+        console.error('批量上传错误:', error);
+        res.status(500).json({ error: '批量上传失败: ' + error.message });
     }
 });
 
@@ -226,7 +261,7 @@ app.delete('/api/files/:id', (req, res) => {
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
         }
-
+        
         // 从数据库中删除
         fileDatabase.splice(fileIndex, 1);
         
@@ -235,6 +270,40 @@ app.delete('/api/files/:id', (req, res) => {
         res.status(500).json({ error: '文件删除失败: ' + error.message });
     }
 });
+
+// 批量上传文件
+app.post('/api/upload-multiple', upload.array('files', 10), (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: '没有文件上传' });
+        }
+
+        const uploadedFiles = [];
+        
+        req.files.forEach(file => {
+            const newFile = {
+                id: fileDatabase.length + 1,
+                originalName: file.originalname,
+                fileName: file.filename,
+                size: file.size,
+                type: file.mimetype,
+                uploadDate: new Date().toISOString().split('T')[0],
+                downloadCount: 0
+            };
+            
+            fileDatabase.push(newFile);
+            uploadedFiles.push(newFile);
+        });
+        
+        res.json({
+            message: `成功上传 ${uploadedFiles.length} 个文件`,
+            files: uploadedFiles
+        });
+    } catch (error) {
+        res.status(500).json({ error: '批量上传失败: ' + error.message });
+    }
+});
+
 
 // 搜索文件
 app.get('/api/files/search', (req, res) => {

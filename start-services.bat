@@ -1,21 +1,21 @@
 @echo off
 chcp 65001 >nul
-echo 启动文件管理系统服务...
+echo Starting File Management System Services...
 echo.
 
-echo 启动后端服务器 (端口3000)...
-start "后端服务器" cmd /k "cd /d C:\static-site && npm start"
+echo Starting Backend Server (Port 3000)...
+start "Backend Server" cmd /k "cd /d C:\static-site && npm start"
 
 timeout /t 3 /nobreak >nul
 
-echo 启动前端服务器 (端口8000)...
-start "前端服务器" cmd /k "cd /d C:\static-site && python -m http.server 8000"
+echo Starting Frontend Server (Port 8000)...
+start "Frontend Server" cmd /k "cd /d C:\static-site && python -m http.server 8000"
 
 echo.
-echo 服务启动完成！
-echo 后端API: http://localhost:3000
-echo 前端页面: http://localhost:8000
-echo 文件管理: http://localhost:8000/files.html
+echo Services Started Successfully!
+echo Backend API: http://localhost:3000
+echo Frontend Page: http://localhost:8000
+echo File Management: http://localhost:8000/files.html
 echo.
-echo 按任意键关闭此窗口...
+echo Press any key to close this window...
 pause >nul
