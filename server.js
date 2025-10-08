@@ -19,7 +19,7 @@ app.get('/admin', (req, res) => {
 });
 
 app.get('/files.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin.html'));
+    res.sendFile(path.join(__dirname, 'files.html'));
 });
 
 // 创建上传目录

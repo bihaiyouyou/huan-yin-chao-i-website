@@ -82,7 +82,11 @@ async function uploadFiles(files) {
         showProgress(true);
         updateProgress(0, '开始上传...');
         
-        const response = await fetch('/api/upload-multiple', {
+        // 3000端口使用相对路径，8000端口使用绝对路径
+        const isPort3000 = window.location.port === '3000';
+        const uploadUrl = isPort3000 ? '/api/upload-multiple' : 'http://localhost:3000/api/upload-multiple';
+        
+        const response = await fetch(uploadUrl, {
             method: 'POST',
             body: formData
         });
@@ -147,20 +151,9 @@ function showTab(tabName) {
 async function loadFiles() {
     console.log('开始加载文件列表...');
     try {
-        // 检测当前环境，决定API地址
-        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const isEdgeOne = window.location.hostname.includes('edgeone-pages.com');
-        
-        let apiBase;
-        if (isLocalhost) {
-            apiBase = 'http://localhost:3000';
-        } else if (isEdgeOne) {
-            apiBase = 'https://your-backend-domain.com'; // 生产环境后端地址
-        } else {
-            apiBase = 'https://your-backend-domain.com'; // 默认生产环境
-        }
-        
-        const apiUrl = `${apiBase}/api/files`;
+        // 3000端口使用相对路径，8000端口使用绝对路径
+        const isPort3000 = window.location.port === '3000';
+        const apiUrl = isPort3000 ? '/api/files' : 'http://localhost:3000/api/files';
         
         console.log('发送请求到:', apiUrl);
         const response = await fetch(apiUrl);
@@ -282,20 +275,9 @@ async function downloadFile(fileId) {
     try {
         console.log('开始下载文件:', fileId);
         
-        // 检测当前环境，决定API地址
-        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const isEdgeOne = window.location.hostname.includes('edgeone-pages.com');
-        
-        let apiBase;
-        if (isLocalhost) {
-            apiBase = 'http://localhost:3000';
-        } else if (isEdgeOne) {
-            apiBase = 'https://your-backend-domain.com'; // 生产环境后端地址
-        } else {
-            apiBase = 'https://your-backend-domain.com'; // 默认生产环境
-        }
-        
-        const downloadUrl = `${apiBase}/api/download/${fileId}`;
+        // 3000端口使用相对路径，8000端口使用绝对路径
+        const isPort3000 = window.location.port === '3000';
+        const downloadUrl = isPort3000 ? `/api/download/${fileId}` : `http://localhost:3000/api/download/${fileId}`;
         
         console.log('下载URL:', downloadUrl);
         const response = await fetch(downloadUrl);
@@ -326,7 +308,11 @@ async function downloadFile(fileId) {
 async function deleteFile(fileId) {
     if (confirm('确定要删除这个文件吗？')) {
         try {
-            const response = await fetch(`/api/files/${fileId}`, {
+            // 3000端口使用相对路径，8000端口使用绝对路径
+            const isPort3000 = window.location.port === '3000';
+            const deleteUrl = isPort3000 ? `/api/files/${fileId}` : `http://localhost:3000/api/files/${fileId}`;
+            
+            const response = await fetch(deleteUrl, {
                 method: 'DELETE'
             });
             
