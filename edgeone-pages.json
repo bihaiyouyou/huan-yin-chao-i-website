@@ -1,0 +1,89 @@
+{
+  "name": "huan-yin-chao-i-website",
+  "description": "幻银超i桌面虚拟机器人官网 - EdgeOne Pages部署配置",
+  "version": "1.0.0",
+  "build": {
+    "command": "echo 'Static site - no build required'",
+    "output": "."
+  },
+  "deploy": {
+    "platform": "edgeone-pages",
+    "region": "global",
+    "cdn": true,
+    "https": true
+  },
+  "files": {
+    "include": [
+      "*.html",
+      "css/**/*",
+      "js/**/*",
+      "images/**/*",
+      "*.md",
+      "*.json"
+    ],
+    "exclude": [
+      "node_modules/**/*",
+      "uploads/**/*",
+      "*.log",
+      "*.bat",
+      "server.js",
+      "package.json",
+      "package-lock.json"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/",
+      "file": "index.html"
+    },
+    {
+      "path": "/business",
+      "file": "business.html"
+    },
+    {
+      "path": "/news",
+      "file": "news.html"
+    },
+    {
+      "path": "/technology",
+      "file": "technology.html"
+    },
+    {
+      "path": "/about",
+      "file": "about.html"
+    },
+    {
+      "path": "/files",
+      "file": "files.html"
+    }
+  ],
+  "headers": {
+    "/*": {
+      "Cache-Control": "public, max-age=31536000"
+    },
+    "/*.html": {
+      "Cache-Control": "public, max-age=3600"
+    },
+    "/*.css": {
+      "Cache-Control": "public, max-age=31536000"
+    },
+    "/*.js": {
+      "Cache-Control": "public, max-age=31536000"
+    },
+    "/*.png": {
+      "Cache-Control": "public, max-age=31536000"
+    },
+    "/*.jpg": {
+      "Cache-Control": "public, max-age=31536000"
+    },
+    "/*.jpeg": {
+      "Cache-Control": "public, max-age=31536000"
+    },
+    "/*.gif": {
+      "Cache-Control": "public, max-age=31536000"
+    },
+    "/*.svg": {
+      "Cache-Control": "public, max-age=31536000"
+    }
+  }
+}
