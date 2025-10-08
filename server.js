@@ -11,6 +11,12 @@ const PORT = process.env.PORT || 3000;
 // 中间件
 app.use(cors());
 app.use(express.json());
+
+// 根路径路由 - 3000端口主页 (必须在静态文件服务之前)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index-admin.html'));
+});
+
 app.use(express.static('.')); // 提供静态文件服务
 
 // 管理页面路由
