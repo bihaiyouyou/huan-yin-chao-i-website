@@ -1,12 +1,14 @@
 /* 文件管理页面专用样式 */
 
-/* 文件下载标题 */
+/* 文件管理标题 */
 .files-title {
     text-align: center;
     margin-bottom: 40px;
     position: static;
     width: auto;
 }
+
+/* 标签切换功能已移除 */
 
 .files-title .main {
     font-size: 48px;

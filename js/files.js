@@ -26,27 +26,30 @@ function initializeFileManagement() {
 
 // 上传功能已移除，只保留下载功能
 
-// 加载文件列表（纯前端实现）
-function loadFiles() {
-    console.log('开始加载文件列表（纯前端模式）...');
-    
-    // 从浏览器本地存储加载文件列表
-    const storedFiles = localStorage.getItem('fileList');
-    if (storedFiles) {
-        try {
-            const files = JSON.parse(storedFiles);
-            console.log('从本地存储加载文件:', files);
+// 加载文件列表
+async function loadFiles() {
+    console.log('开始加载文件列表...');
+    try {
+        console.log('发送请求到: http://localhost:3000/api/files');
+        const response = await fetch('http://localhost:3000/api/files');
+        console.log('收到响应:', response.status, response.statusText);
+        
+        if (response.ok) {
+            const files = await response.json();
+            console.log('文件列表数据:', files);
             currentFiles = files;
             displayFileGrid(files);
-            return;
-        } catch (error) {
-            console.error('解析本地存储文件失败:', error);
+            console.log('文件列表显示完成');
+        } else {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+    } catch (error) {
+        console.error('加载文件列表失败:', error);
+        showMessage('加载文件列表失败: ' + error.message, 'error');
+        // 显示模拟数据
+        console.log('使用模拟数据...');
+        displayMockFiles();
     }
-    
-    // 如果没有本地存储，显示默认文件列表
-    console.log('使用默认文件列表...');
-    displayMockFiles();
 }
 
 // 显示模拟文件数据（用于演示）
@@ -135,66 +138,37 @@ function createFileCard(file) {
         <p>下载次数: ${file.downloadCount}</p>
         <div class="file-card-actions">
             <button class="file-card-btn" onclick="downloadFile(${file.id})">下载</button>
-            <button class="file-card-btn delete" onclick="deleteFile(${file.id})">删除</button>
         </div>
     `;
     
     return fileCard;
 }
 
-// 下载文件（纯前端实现）
-function downloadFile(fileId) {
-    const file = currentFiles.find(f => f.id === fileId);
-    if (!file) {
-        showMessage('文件不存在', 'error');
-        return;
+// 下载文件
+async function downloadFile(fileId) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/download/${fileId}`);
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'file';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            showMessage('文件下载开始', 'success');
+        } else {
+            throw new Error('下载失败');
+        }
+    } catch (error) {
+        showMessage('下载失败: ' + error.message, 'error');
     }
-    
-    // 纯前端下载实现
-    if (file.downloadUrl) {
-        // 如果有外部下载链接，直接下载
-        const link = document.createElement('a');
-        link.href = file.downloadUrl;
-        link.download = file.name;
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    } else {
-        // 创建模拟下载（实际项目中需要真实的文件）
-        const blob = new Blob(['这是一个模拟文件内容'], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = file.name;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    }
-    
-    showMessage(`开始下载: ${file.name}`, 'success');
 }
 
-// 删除文件
-async function deleteFile(fileId) {
-    if (confirm('确定要删除这个文件吗？')) {
-        try {
-            const response = await fetch(`http://localhost:3000/api/files/${fileId}`, {
-                method: 'DELETE'
-            });
-            
-            if (response.ok) {
-                showMessage('文件删除成功', 'success');
-                loadFiles(); // 重新加载文件列表
-            } else {
-                throw new Error('删除失败');
-            }
-        } catch (error) {
-            showMessage('删除失败: ' + error.message, 'error');
-        }
-    }
-}
+// 删除功能已移除，只保留下载功能
 
 // 搜索文件
 function searchFiles() {
