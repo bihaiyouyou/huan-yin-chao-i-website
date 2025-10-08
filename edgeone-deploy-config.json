@@ -1,0 +1,57 @@
+{
+  "name": "huan-yin-chao-i-website",
+  "description": "幻银超i桌面虚拟机器人官网 - EdgeOne Pages部署配置",
+  "version": "1.0.0",
+  "deployment": {
+    "platform": "edgeone-pages",
+    "frontend": {
+      "source": "8000端口静态文件",
+      "backend_api": "3000端口API服务",
+      "cors_enabled": true
+    },
+    "backend": {
+      "type": "separate_server",
+      "api_endpoint": "https://your-backend-domain.com",
+      "cors_origin": "https://your-site.edgeone-pages.com"
+    }
+  },
+  "files": {
+    "include": [
+      "*.html",
+      "css/**/*",
+      "js/**/*", 
+      "images/**/*",
+      "*.md"
+    ],
+    "exclude": [
+      "node_modules/**/*",
+      "uploads/**/*",
+      "*.log",
+      "server.js",
+      "package.json",
+      "package-lock.json",
+      "admin.html"
+    ]
+  },
+  "api_config": {
+    "backend_url": "https://your-backend-domain.com",
+    "endpoints": {
+      "files": "/api/files",
+      "download": "/api/download",
+      "upload": "/api/upload-multiple",
+      "delete": "/api/files"
+    },
+    "cors": {
+      "origin": ["https://your-site.edgeone-pages.com"],
+      "methods": ["GET", "POST", "DELETE"],
+      "headers": ["Content-Type", "Authorization"]
+    }
+  },
+  "deployment_steps": [
+    "1. 部署前端到EdgeOne Pages",
+    "2. 部署后端到云服务器",
+    "3. 配置CORS允许EdgeOne Pages访问",
+    "4. 更新前端API地址为生产环境",
+    "5. 测试文件上传/下载功能"
+  ]
+}

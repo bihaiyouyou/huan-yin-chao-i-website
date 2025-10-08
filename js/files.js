@@ -147,8 +147,23 @@ function showTab(tabName) {
 async function loadFiles() {
     console.log('开始加载文件列表...');
     try {
-        console.log('发送请求到: http://localhost:3000/api/files');
-        const response = await fetch('http://localhost:3000/api/files');
+        // 检测当前环境，决定API地址
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const isEdgeOne = window.location.hostname.includes('edgeone-pages.com');
+        
+        let apiBase;
+        if (isLocalhost) {
+            apiBase = 'http://localhost:3000';
+        } else if (isEdgeOne) {
+            apiBase = 'https://your-backend-domain.com'; // 生产环境后端地址
+        } else {
+            apiBase = 'https://your-backend-domain.com'; // 默认生产环境
+        }
+        
+        const apiUrl = `${apiBase}/api/files`;
+        
+        console.log('发送请求到:', apiUrl);
+        const response = await fetch(apiUrl);
         console.log('收到响应:', response.status, response.statusText);
         
         if (response.ok) {
@@ -266,7 +281,24 @@ function createFileCard(file) {
 async function downloadFile(fileId) {
     try {
         console.log('开始下载文件:', fileId);
-        const response = await fetch(`http://localhost:3000/api/download/${fileId}`);
+        
+        // 检测当前环境，决定API地址
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const isEdgeOne = window.location.hostname.includes('edgeone-pages.com');
+        
+        let apiBase;
+        if (isLocalhost) {
+            apiBase = 'http://localhost:3000';
+        } else if (isEdgeOne) {
+            apiBase = 'https://your-backend-domain.com'; // 生产环境后端地址
+        } else {
+            apiBase = 'https://your-backend-domain.com'; // 默认生产环境
+        }
+        
+        const downloadUrl = `${apiBase}/api/download/${fileId}`;
+        
+        console.log('下载URL:', downloadUrl);
+        const response = await fetch(downloadUrl);
         console.log('下载响应:', response.status, response.statusText);
         
         if (response.ok) {

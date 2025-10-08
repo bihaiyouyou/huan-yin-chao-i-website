@@ -88,59 +88,24 @@
             <div class="fullmeasure-content">
                 <div class="files-title">
                     <div class="main">
-                        <span class="white">文件</span><span class="highlight">管理</span>
+                        <span class="white">文件</span><span class="highlight">下载</span>
                     </div>
-                    <div class="sub">FILE MANAGEMENT</div>
+                    <div class="sub">FILE DOWNLOAD</div>
                 </div>
 
-                <!-- 标签切换区域 -->
-                <div class="tab-container">
-                    <div class="tab-buttons">
-                        <button class="tab-button active" onclick="showTab('upload')">文件上传</button>
-                        <button class="tab-button" onclick="showTab('download')">文件下载</button>
+                <!-- 文件下载区域 -->
+                <div class="download-container">
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" placeholder="搜索文件名..." class="search-input">
+                        <button class="search-btn" onclick="searchFiles()">搜索</button>
                     </div>
-                    
-                    <!-- 文件上传区域 -->
-                    <div id="upload" class="tab-content active">
-                        <div class="upload-container">
-                            <div class="upload-area" id="uploadArea">
-                                <div class="upload-icon">📁</div>
-                                <div class="upload-text">
-                                    <h3>拖拽文件到此处或点击选择文件</h3>
-                                    <p>支持单个或多个文件上传</p>
-                                </div>
-                                <input type="file" id="fileInput" multiple style="display: none;">
-                            </div>
-                            
-                            <div class="upload-progress" id="uploadProgress" style="display: none;">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" id="progressFill"></div>
-                                </div>
-                                <div class="progress-text" id="progressText">上传中...</div>
-                            </div>
-                            
-                            <div class="file-list" id="fileList">
-                                <!-- 上传的文件列表 -->
-                            </div>
-                        </div>
+
+                    <div class="file-grid" id="fileGrid">
+                        <!-- 文件列表将显示在这里 -->
                     </div>
-                    
-                    <!-- 文件下载区域 -->
-                    <div id="download" class="tab-content">
-                        <div class="download-container">
-                            <div class="search-bar">
-                                <input type="text" id="searchInput" placeholder="搜索文件名..." class="search-input">
-                                <button class="search-btn" onclick="searchFiles()">搜索</button>
-                            </div>
 
-                            <div class="file-grid" id="fileGrid">
-                                <!-- 文件列表将显示在这里 -->
-                            </div>
-
-                            <div class="pagination" id="pagination">
-                                <!-- 分页控件 -->
-                            </div>
-                        </div>
+                    <div class="pagination" id="pagination">
+                        <!-- 分页控件 -->
                     </div>
                 </div>
             </div>
