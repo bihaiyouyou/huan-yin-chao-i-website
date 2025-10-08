@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>软件下载 - 幻银超i桌面虚拟机器人</title>
+    <title>文件管理后台 - 幻银超i桌面虚拟机器人</title>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/files.css">
 </head>
@@ -49,7 +49,7 @@
                             </div>
                             <div class="itemSep"><span>|</span></div>
                             <div class="item itemSelected">
-                                <a href="files.html">软件下载</a>
+                                <a href="files-admin.html">文件管理后台</a>
                             </div>
                         </div>
                     </div>
@@ -62,19 +62,13 @@
             <div id="webBanner" class="webBanner">
                 <div class="banner" style="background-image: url('images/2.png'); background-color: #1a1a1a; background-position: center -150px;">
                     <div class="banner-overlay">
-                        <!-- ZeroM Robot solutions 文字 -->
-                        <div class="banner-text-large">
-                            <span>ZeroM Robot solutions</span>
-                        </div>
-
-                        <!-- 右侧文字内容 -->
                         <div class="banner-text-right">
                             <div class="title">
-                                <span class="orange">文件</span><span class="white">下载</span>
+                                <span class="orange">文件</span><span class="white">管理</span>
                             </div>
-                            <div class="subtitle">File Download Center</div>
+                            <div class="subtitle">File Management Admin</div>
                             <div class="service">
-                                安全便捷的文件下载<br>
+                                安全便捷的文件管理<br>
                                 智能文件管理系统
                             </div>
                         </div>
@@ -88,24 +82,59 @@
             <div class="fullmeasure-content">
                 <div class="files-title">
                     <div class="main">
-                        <span class="white">文件</span><span class="highlight">下载</span>
+                        <span class="white">文件</span><span class="highlight">管理</span>
                     </div>
-                    <div class="sub">FILE DOWNLOAD</div>
+                    <div class="sub">FILE MANAGEMENT</div>
                 </div>
 
-                <!-- 文件下载区域 -->
-                <div class="download-container">
-                    <div class="search-bar">
-                        <input type="text" id="searchInput" placeholder="搜索文件名..." class="search-input">
-                        <button class="search-btn" onclick="searchFiles()">搜索</button>
+                <!-- 标签切换区域 -->
+                <div class="tab-container">
+                    <div class="tab-buttons">
+                        <button class="tab-button active" onclick="showTab('upload')">文件上传</button>
+                        <button class="tab-button" onclick="showTab('download')">文件下载</button>
                     </div>
-
-                    <div class="file-grid" id="fileGrid">
-                        <!-- 文件列表将显示在这里 -->
+                    
+                    <!-- 文件上传区域 -->
+                    <div id="upload" class="tab-content active">
+                        <div class="upload-container">
+                            <div class="upload-area" id="uploadArea">
+                                <div class="upload-icon">📁</div>
+                                <div class="upload-text">
+                                    <h3>拖拽文件到此处或点击选择文件</h3>
+                                    <p>支持单个或多个文件上传</p>
+                                </div>
+                                <input type="file" id="fileInput" multiple style="display: none;">
+                            </div>
+                            
+                            <div class="upload-progress" id="uploadProgress" style="display: none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progressFill"></div>
+                                </div>
+                                <div class="progress-text" id="progressText">上传中...</div>
+                            </div>
+                            
+                            <div class="file-list" id="fileList">
+                                <!-- 上传的文件列表 -->
+                            </div>
+                        </div>
                     </div>
+                    
+                    <!-- 文件下载区域 -->
+                    <div id="download" class="tab-content">
+                        <div class="download-container">
+                            <div class="search-bar">
+                                <input type="text" id="searchInput" placeholder="搜索文件名..." class="search-input">
+                                <button class="search-btn" onclick="searchFiles()">搜索</button>
+                            </div>
 
-                    <div class="pagination" id="pagination">
-                        <!-- 分页控件 -->
+                            <div class="file-grid" id="fileGrid">
+                                <!-- 文件列表将显示在这里 -->
+                            </div>
+
+                            <div class="pagination" id="pagination">
+                                <!-- 分页控件 -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -169,6 +198,12 @@
     </div>
 
     <script src="js/main.js"></script>
-    <script src="js/files-download.js"></script>
+    <script src="js/files.js"></script>
+    <script>
+        // 确保初始显示上传tab
+        document.addEventListener('DOMContentLoaded', () => {
+            showTab('upload');
+        });
+    </script>
 </body>
 </html>
