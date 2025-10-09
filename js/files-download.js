@@ -156,14 +156,21 @@ async function downloadFile(fileId) {
             
             // 获取原始文件名
             const originalFileName = response.headers.get('Content-Disposition');
+            console.log('Content-Disposition:', originalFileName);
             let fileName = 'file';
             if (originalFileName) {
                 const match = originalFileName.match(/filename="([^"]+)"/);
                 if (match) {
                     fileName = decodeURIComponent(match[1]);
+                    console.log('解析到的文件名:', fileName);
+                } else {
+                    console.log('无法解析文件名，使用默认名称');
                 }
+            } else {
+                console.log('没有Content-Disposition头，使用默认名称');
             }
             
+            console.log('最终下载文件名:', fileName);
             a.download = fileName;
             document.body.appendChild(a);
             a.click();
