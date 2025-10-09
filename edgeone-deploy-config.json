@@ -30,7 +30,6 @@
       "server.js",
       "package.json",
       "package-lock.json",
-      "admin.html"
     ]
   },
   "api_config": {
