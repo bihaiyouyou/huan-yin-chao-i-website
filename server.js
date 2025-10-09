@@ -87,46 +87,9 @@ const upload = multer({
 // 文件信息存储（实际项目中应使用数据库）
 let fileDatabase = [];
 
-// 初始化一些示例文件
+// 初始化空数据库（删除所有预置文件）
 const initSampleFiles = () => {
-    fileDatabase = [
-        {
-            id: 1,
-            originalName: '产品介绍.pdf',
-            fileName: 'sample1.pdf',
-            size: 2048576,
-            type: 'application/pdf',
-            uploadDate: '2025-01-07',
-            downloadCount: 15
-        },
-        {
-            id: 2,
-            originalName: '技术文档.docx',
-            fileName: 'sample2.docx',
-            size: 1536000,
-            type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            uploadDate: '2025-01-06',
-            downloadCount: 8
-        },
-        {
-            id: 3,
-            originalName: '演示视频.mp4',
-            fileName: 'sample3.mp4',
-            size: 52428800,
-            type: 'video/mp4',
-            uploadDate: '2025-01-05',
-            downloadCount: 23
-        },
-        {
-            id: 4,
-            originalName: '图片素材.zip',
-            fileName: 'sample4.zip',
-            size: 10485760,
-            type: 'application/zip',
-            uploadDate: '2025-01-04',
-            downloadCount: 12
-        }
-    ];
+    fileDatabase = [];
 };
 
 // 初始化示例数据

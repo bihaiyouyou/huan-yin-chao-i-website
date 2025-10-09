@@ -153,7 +153,18 @@ async function downloadFile(fileId) {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'file';
+            
+            // 获取原始文件名
+            const originalFileName = response.headers.get('Content-Disposition');
+            let fileName = 'file';
+            if (originalFileName) {
+                const match = originalFileName.match(/filename="([^"]+)"/);
+                if (match) {
+                    fileName = decodeURIComponent(match[1]);
+                }
+            }
+            
+            a.download = fileName;
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
