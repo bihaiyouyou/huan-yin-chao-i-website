@@ -84,16 +84,39 @@ const upload = multer({
     }
 });
 
-// 文件信息存储（实际项目中应使用数据库）
+// 文件信息存储（使用JSON文件持久化）
+const databaseFile = path.join(__dirname, 'fileDatabase.json');
 let fileDatabase = [];
 
-// 初始化空数据库（删除所有预置文件）
-const initSampleFiles = () => {
-    fileDatabase = [];
+// 加载数据库文件
+const loadDatabase = () => {
+    try {
+        if (fs.existsSync(databaseFile)) {
+            const data = fs.readFileSync(databaseFile, 'utf8');
+            fileDatabase = JSON.parse(data);
+            console.log(`📁 加载了 ${fileDatabase.length} 个文件记录`);
+        } else {
+            fileDatabase = [];
+            console.log('📁 数据库文件不存在，创建空数据库');
+        }
+    } catch (error) {
+        console.error('❌ 加载数据库失败:', error);
+        fileDatabase = [];
+    }
 };
 
-// 初始化示例数据
-initSampleFiles();
+// 保存数据库文件
+const saveDatabase = () => {
+    try {
+        fs.writeFileSync(databaseFile, JSON.stringify(fileDatabase, null, 2));
+        console.log('💾 数据库已保存');
+    } catch (error) {
+        console.error('❌ 保存数据库失败:', error);
+    }
+};
+
+// 初始化数据库
+loadDatabase();
 
 // 创建示例文件
 function createSampleFiles() {
@@ -183,6 +206,9 @@ app.post('/api/upload-multiple', upload.array('files', 10), (req, res) => {
             uploadedFiles.push(newFile);
         });
         
+        // 保存数据库
+        saveDatabase();
+        
         res.json({
             message: `成功上传 ${uploadedFiles.length} 个文件`,
             files: uploadedFiles
@@ -244,6 +270,9 @@ app.delete('/api/files/:id', (req, res) => {
         
         // 从数据库中删除
         fileDatabase.splice(fileIndex, 1);
+        
+        // 保存数据库
+        saveDatabase();
         
         res.json({ message: '文件删除成功' });
     } catch (error) {
