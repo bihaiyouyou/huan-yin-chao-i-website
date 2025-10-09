@@ -204,8 +204,10 @@ app.post('/api/upload-multiple', upload.array('files', 10), (req, res) => {
         const uploadedFiles = [];
         
         req.files.forEach(file => {
+            // 生成唯一ID，避免冲突
+            const maxId = fileDatabase.length > 0 ? Math.max(...fileDatabase.map(f => f.id)) : 0;
             const newFile = {
-                id: fileDatabase.length + 1,
+                id: maxId + 1,
                 originalName: file.originalname,
                 fileName: file.filename,
                 size: file.size,
@@ -285,40 +287,6 @@ app.delete('/api/files/:id', (req, res) => {
         res.status(500).json({ error: '文件删除失败: ' + error.message });
     }
 });
-
-// 批量上传文件
-app.post('/api/upload-multiple', upload.array('files', 10), (req, res) => {
-    try {
-        if (!req.files || req.files.length === 0) {
-            return res.status(400).json({ error: '没有文件上传' });
-        }
-
-        const uploadedFiles = [];
-        
-        req.files.forEach(file => {
-            const newFile = {
-                id: fileDatabase.length + 1,
-                originalName: file.originalname,
-                fileName: file.filename,
-                size: file.size,
-                type: file.mimetype,
-                uploadDate: new Date().toISOString().split('T')[0],
-                downloadCount: 0
-            };
-            
-            fileDatabase.push(newFile);
-            uploadedFiles.push(newFile);
-        });
-        
-        res.json({
-            message: `成功上传 ${uploadedFiles.length} 个文件`,
-            files: uploadedFiles
-        });
-    } catch (error) {
-        res.status(500).json({ error: '批量上传失败: ' + error.message });
-    }
-});
-
 
 // 搜索文件
 app.get('/api/files/search', (req, res) => {
