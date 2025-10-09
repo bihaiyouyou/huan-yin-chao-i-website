@@ -83,8 +83,7 @@ async function uploadFiles(files) {
         updateProgress(0, '开始上传...');
         
         // 3000端口使用相对路径，8000端口使用绝对路径
-        const isPort3000 = window.location.port === '3000';
-        const uploadUrl = isPort3000 ? '/api/upload-multiple' : 'http://localhost:3000/api/upload-multiple';
+        const uploadUrl = config.getApiUrl('/api/upload-multiple');
         
         const response = await fetch(uploadUrl, {
             method: 'POST',
@@ -152,8 +151,7 @@ async function loadFiles() {
     console.log('开始加载文件列表...');
     try {
         // 3000端口使用相对路径，8000端口使用绝对路径
-        const isPort3000 = window.location.port === '3000';
-        const apiUrl = isPort3000 ? '/api/files' : 'http://localhost:3000/api/files';
+        const apiUrl = config.getApiUrl('/api/files');
         
         console.log('发送请求到:', apiUrl);
         const response = await fetch(apiUrl);
@@ -276,8 +274,7 @@ async function downloadFile(fileId) {
         console.log('开始下载文件:', fileId);
         
         // 3000端口使用相对路径，8000端口使用绝对路径
-        const isPort3000 = window.location.port === '3000';
-        const downloadUrl = isPort3000 ? `/api/download/${fileId}` : `http://localhost:3000/api/download/${fileId}`;
+        const downloadUrl = config.getApiUrl(`/api/download/${fileId}`);
         
         console.log('下载URL:', downloadUrl);
         const response = await fetch(downloadUrl);
@@ -320,8 +317,7 @@ async function deleteFile(fileId) {
     if (confirm('确定要删除这个文件吗？')) {
         try {
             // 3000端口使用相对路径，8000端口使用绝对路径
-            const isPort3000 = window.location.port === '3000';
-            const deleteUrl = isPort3000 ? `/api/files/${fileId}` : `http://localhost:3000/api/files/${fileId}`;
+        const deleteUrl = config.getApiUrl(`/api/files/${fileId}`);
             
             const response = await fetch(deleteUrl, {
                 method: 'DELETE'

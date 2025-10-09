@@ -25,8 +25,8 @@ function initializeFileDownload() {
 async function loadFiles() {
     console.log('开始加载文件列表...');
     try {
-        // 8000端口使用绝对路径连接到3000端口API
-        const apiUrl = 'http://localhost:3000/api/files';
+        // 使用配置的API地址
+        const apiUrl = config.getApiUrl('/api/files');
         
         console.log('发送请求到:', apiUrl);
         const response = await fetch(apiUrl);
@@ -141,8 +141,8 @@ async function downloadFile(fileId) {
     try {
         console.log('开始下载文件:', fileId);
         
-        // 8000端口使用绝对路径连接到3000端口API
-        const downloadUrl = `http://localhost:3000/api/download/${fileId}`;
+        // 使用配置的API地址
+        const downloadUrl = config.getApiUrl(`/api/download/${fileId}`);
         
         console.log('下载URL:', downloadUrl);
         const response = await fetch(downloadUrl);
