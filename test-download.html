@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下载测试页面</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a1a; color: white; }
+        .test-area { background: #2a2a2a; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        button { background: #ff6b35; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #e55a2b; }
+        .log { background: #333; padding: 10px; border-radius: 4px; margin: 10px 0; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>8000端口下载功能测试</h1>
+    
+    <div class="test-area">
+        <h2>测试下载功能</h2>
+        <p>点击下面的按钮测试下载功能，查看控制台日志：</p>
+        <button onclick="testDownload()">测试下载文件</button>
+        <button onclick="clearLog()">清除日志</button>
+    </div>
+    
+    <div class="test-area">
+        <h2>控制台日志</h2>
+        <div id="log" class="log">等待测试...</div>
+    </div>
+
+    <script>
+        // 重写console.log来显示在页面上
+        const originalLog = console.log;
+        const logDiv = document.getElementById('log');
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            logDiv.innerHTML += args.join(' ') + '<br>';
+            logDiv.scrollTop = logDiv.scrollHeight;
+        };
+
+        // 测试下载功能
+        async function testDownload() {
+            console.log('开始测试下载功能...');
+            
+            try {
+                // 获取文件列表
+                console.log('获取文件列表...');
+                const response = await fetch('http://localhost:3000/api/files');
+                const files = await response.json();
+                console.log('文件列表:', files);
+                
+                if (files.length > 0) {
+                    const file = files[0];
+                    console.log('测试下载文件:', file.originalName);
+                    
+                    // 测试下载
+                    const downloadResponse = await fetch(`http://localhost:3000/api/download/${file.id}`);
+                    console.log('下载响应状态:', downloadResponse.status);
+                    console.log('Content-Disposition:', downloadResponse.headers.get('Content-Disposition'));
+                    
+                    if (downloadResponse.ok) {
+                        const blob = await downloadResponse.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        
+                        // 获取原始文件名
+                        const originalFileName = downloadResponse.headers.get('Content-Disposition');
+                        console.log('Content-Disposition:', originalFileName);
+                        let fileName = 'file';
+                        if (originalFileName) {
+                            const match = originalFileName.match(/filename="([^"]+)"/);
+                            if (match) {
+                                fileName = decodeURIComponent(match[1]);
+                                console.log('解析到的文件名:', fileName);
+                            } else {
+                                console.log('无法解析文件名，使用默认名称');
+                            }
+                        } else {
+                            console.log('没有Content-Disposition头，使用默认名称');
+                        }
+                        
+                        console.log('最终下载文件名:', fileName);
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                        
+                        console.log('下载完成！');
+                    } else {
+                        console.log('下载失败:', downloadResponse.status, downloadResponse.statusText);
+                    }
+                } else {
+                    console.log('没有文件可供下载');
+                }
+            } catch (error) {
+                console.log('测试失败:', error.message);
+            }
+        }
+
+        function clearLog() {
+            logDiv.innerHTML = '日志已清除<br>';
+        }
+    </script>
+</body>
+</html>

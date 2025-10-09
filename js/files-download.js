@@ -149,11 +149,6 @@ async function downloadFile(fileId) {
         console.log('下载响应:', response.status, response.statusText);
         
         if (response.ok) {
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            
             // 获取原始文件名
             const originalFileName = response.headers.get('Content-Disposition');
             console.log('Content-Disposition:', originalFileName);
@@ -171,7 +166,12 @@ async function downloadFile(fileId) {
             }
             
             console.log('最终下载文件名:', fileName);
-            a.download = fileName;
+            
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName; // 确保使用解析到的文件名
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
