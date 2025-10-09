@@ -9,7 +9,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // 中间件
-app.use(cors());
+app.use(cors({
+    origin: '*',
+    credentials: true,
+    exposedHeaders: ['Content-Disposition']
+}));
 app.use(express.json());
 
 // 根路径路由 - 3000端口主页 (必须在静态文件服务之前)

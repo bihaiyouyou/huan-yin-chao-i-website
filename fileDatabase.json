@@ -6,13 +6,22 @@
     "size": 10934,
     "type": "image/png",
     "uploadDate": "2025-10-09",
-    "downloadCount": 1
+    "downloadCount": 2
   },
   {
     "id": 2,
     "originalName": "4.png",
     "fileName": "403e7af1-67ca-440f-9f4c-8b2e68eb164f.png",
     "size": 60061,
+    "type": "image/png",
+    "uploadDate": "2025-10-09",
+    "downloadCount": 1
+  },
+  {
+    "id": 3,
+    "originalName": "9.png",
+    "fileName": "f0a2592a-4fd3-44e4-9755-9f4c42637c90.png",
+    "size": 675241,
     "type": "image/png",
     "uploadDate": "2025-10-09",
     "downloadCount": 0
