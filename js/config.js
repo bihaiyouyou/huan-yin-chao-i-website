@@ -11,7 +11,7 @@ const config = {
         } else {
             // 生产环境 - 使用Tailscale Funnel URL
             // 注意：这个URL需要根据实际的Tailscale Funnel URL进行更新
-            return 'https://your-server.ts.net:3000';
+            return 'http://deepseek.tailc6a334.ts.net:3000';
         }
     },
     
