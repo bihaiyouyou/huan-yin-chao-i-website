@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API连接测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a1a; color: white; }
+        .test-area { background: #2a2a2a; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        button { background: #ff6b35; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #e55a2b; }
+        .log { background: #333; padding: 10px; border-radius: 4px; margin: 10px 0; font-family: monospace; white-space: pre-wrap; }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+    </style>
+</head>
+<body>
+    <h1>API连接测试页面</h1>
+    
+    <div class="test-area">
+        <h2>当前配置</h2>
+        <p><strong>API基础URL:</strong> <span id="apiBaseUrl"></span></p>
+        <p><strong>当前环境:</strong> <span id="currentEnv"></span></p>
+    </div>
+    
+    <div class="test-area">
+        <h2>API测试</h2>
+        <button onclick="testApiConnection()">测试API连接</button>
+        <button onclick="testFileList()">测试文件列表</button>
+        <button onclick="testDownload()">测试下载</button>
+        <button onclick="clearLog()">清除日志</button>
+    </div>
+    
+    <div class="test-area">
+        <h2>测试日志</h2>
+        <div id="log" class="log">等待测试...</div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        // 显示当前配置
+        document.getElementById('apiBaseUrl').textContent = config.getApiBaseUrl();
+        document.getElementById('currentEnv').textContent = config.isLocalhost ? '本地开发环境' : '生产环境';
+        
+        // 重写console.log来显示在页面上
+        const originalLog = console.log;
+        const logDiv = document.getElementById('log');
+        
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+            logDiv.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        // 测试API连接
+        async function testApiConnection() {
+            addLog('开始测试API连接...');
+            try {
+                const apiUrl = config.getApiUrl('/api/files');
+                addLog(`请求URL: ${apiUrl}`);
+                
+                const response = await fetch(apiUrl);
+                addLog(`响应状态: ${response.status} ${response.statusText}`, response.ok ? 'success' : 'error');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addLog(`API连接成功！文件数量: ${data.length}`, 'success');
+                } else {
+                    addLog(`API连接失败: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                addLog(`API连接错误: ${error.message}`, 'error');
+            }
+        }
+
+        // 测试文件列表
+        async function testFileList() {
+            addLog('开始测试文件列表...');
+            try {
+                const apiUrl = config.getApiUrl('/api/files');
+                const response = await fetch(apiUrl);
+                
+                if (response.ok) {
+                    const files = await response.json();
+                    addLog(`文件列表获取成功！`, 'success');
+                    addLog(`文件数量: ${files.length}`);
+                    files.forEach((file, index) => {
+                        addLog(`文件${index + 1}: ${file.originalName || file.name} (ID: ${file.id})`);
+                    });
+                } else {
+                    addLog(`文件列表获取失败: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                addLog(`文件列表错误: ${error.message}`, 'error');
+            }
+        }
+
+        // 测试下载
+        async function testDownload() {
+            addLog('开始测试下载功能...');
+            try {
+                // 先获取文件列表
+                const filesUrl = config.getApiUrl('/api/files');
+                const filesResponse = await fetch(filesUrl);
+                
+                if (!filesResponse.ok) {
+                    addLog('无法获取文件列表', 'error');
+                    return;
+                }
+                
+                const files = await filesResponse.json();
+                if (files.length === 0) {
+                    addLog('没有文件可供下载', 'error');
+                    return;
+                }
+                
+                const firstFile = files[0];
+                const downloadUrl = config.getApiUrl(`/api/download/${firstFile.id}`);
+                addLog(`测试下载文件: ${firstFile.originalName || firstFile.name}`);
+                addLog(`下载URL: ${downloadUrl}`);
+                
+                const downloadResponse = await fetch(downloadUrl);
+                addLog(`下载响应: ${downloadResponse.status} ${downloadResponse.statusText}`, downloadResponse.ok ? 'success' : 'error');
+                
+                if (downloadResponse.ok) {
+                    addLog('下载功能正常！', 'success');
+                } else {
+                    addLog('下载功能异常', 'error');
+                }
+            } catch (error) {
+                addLog(`下载测试错误: ${error.message}`, 'error');
+            }
+        }
+
+        function clearLog() {
+            logDiv.innerHTML = '日志已清除\n';
+        }
+    </script>
+</body>
+</html>
