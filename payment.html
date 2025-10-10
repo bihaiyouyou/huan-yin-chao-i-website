@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>支付页面 - 幻银超i</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/payment.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">幻银超i</a>
+            </div>
+            <div class="nav-menu">
+                <div class="item">
+                    <a href="index.html">首页</a>
+                </div>
+                <div class="item">
+                    <a href="business.html">公司业务</a>
+                </div>
+                <div class="item">
+                    <a href="news.html">新闻资讯</a>
+                </div>
+                <div class="item">
+                    <a href="about.html">关于我们</a>
+                </div>
+                <div class="item">
+                    <a href="files.html">软件下载</a>
+                </div>
+                <div class="item">
+                    <a href="card-shop.html">服务卡</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 支付页面主要内容 -->
+    <div class="fullmeasure-section payment-section">
+        <div class="fullmeasure-content">
+            <div class="payment-container">
+                <div class="payment-header">
+                    <h1>订单确认</h1>
+                    <p>请确认订单信息并完成支付</p>
+                </div>
+
+                <div class="payment-content">
+                    <!-- 订单信息 -->
+                    <div class="order-info">
+                        <h3>订单详情</h3>
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <span class="label">商品名称：</span>
+                                <span class="value" id="productName">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">订单号：</span>
+                                <span class="value" id="orderNumber">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">支付金额：</span>
+                                <span class="value price" id="productPrice">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">支付方式：</span>
+                                <span class="value">支付宝扫码支付</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 支付区域 -->
+                    <div class="payment-area">
+                        <div class="payment-method">
+                            <h3>支付方式</h3>
+                            <div class="payment-options">
+                                <div class="payment-option active">
+                                    <div class="option-icon">💰</div>
+                                    <div class="option-info">
+                                        <h4>支付宝扫码支付</h4>
+                                        <p>安全便捷，支持花呗分期</p>
+                                    </div>
+                                    <div class="option-check">✓</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="qr-payment">
+                            <div class="qr-container">
+                                <div class="qr-code" id="qrCodeContainer">
+                                    <div class="loading" id="qrLoading">
+                                        <div class="spinner"></div>
+                                        <p>正在生成支付二维码...</p>
+                                    </div>
+                                    <img id="qrCodeImage" style="display: none;" alt="支付二维码">
+                                </div>
+                                <div class="qr-instructions">
+                                    <h4>支付步骤：</h4>
+                                    <ol>
+                                        <li>打开支付宝APP</li>
+                                        <li>扫描上方二维码</li>
+                                        <li>确认支付金额</li>
+                                        <li>完成支付</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="payment-status">
+                            <div class="status-item" id="statusPending">
+                                <div class="status-icon">⏳</div>
+                                <div class="status-text">等待支付中...</div>
+                            </div>
+                            <div class="status-item" id="statusSuccess" style="display: none;">
+                                <div class="status-icon">✅</div>
+                                <div class="status-text">支付成功！正在跳转...</div>
+                            </div>
+                            <div class="status-item" id="statusFailed" style="display: none;">
+                                <div class="status-icon">❌</div>
+                                <div class="status-text">支付失败，请重试</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="payment-footer">
+                    <button class="back-btn" onclick="goBack()">返回上页</button>
+                    <button class="refresh-btn" onclick="refreshPayment()">刷新支付</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h3>幻银超i</h3>
+                <p>桌面虚拟机器人</p>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-item">
+                    <h4>公司业务</h4>
+                    <ul>
+                        <li><a href="business.html">产品中心</a></li>
+                        <li><a href="business.html">成功案例</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-item">
+                    <h4>新闻资讯</h4>
+                    <ul>
+                        <li><a href="news.html">公司新闻</a></li>
+                        <li><a href="news.html">行业资讯</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-item">
+                    <h4>核心技术</h4>
+                    <ul>
+                        <li><a href="index.html">核心技术</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-item">
+                    <h4>关于我们</h4>
+                    <ul>
+                        <li><a href="about.html">公司简介</a></li>
+                        <li><a href="about.html">发展历程</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-contact">
+                <div class="footer-contact-title">联系我们</div>
+                <div class="footer-address">浙江省杭州市滨江区</div>
+                <div class="footer-phone">Email: 1930360522@qq.com</div>
+            </div>
+        </div>
+        <div class="footer-info">
+            <p>©2025 - 幻银超i——桌面虚拟机器人 版权所有</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/payment.js"></script>
+</body>
+</html>

@@ -4,6 +4,8 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs-extra');
 const { v4: uuidv4 } = require('uuid');
+const db = require('./config/database');
+const alipay = require('./config/alipay');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -310,6 +312,279 @@ app.use((error, req, res, next) => {
     res.status(500).json({ error: error.message });
 });
 
+// ==================== 发卡系统API ====================
+
+// 获取卡类型列表
+app.get('/api/card-types', async (req, res) => {
+    try {
+        const cardTypes = await db.query('SELECT * FROM card_types WHERE is_active = 1 ORDER BY price ASC');
+        res.json(cardTypes);
+    } catch (error) {
+        console.error('获取卡类型失败:', error);
+        res.status(500).json({ error: '获取卡类型失败' });
+    }
+});
+
+// 创建订单
+app.post('/api/orders', async (req, res) => {
+    try {
+        const { cardTypeId, userId } = req.body;
+        
+        if (!cardTypeId) {
+            return res.status(400).json({ error: '卡类型ID不能为空' });
+        }
+        
+        // 获取卡类型信息
+        const cardTypes = await db.query('SELECT * FROM card_types WHERE id = ? AND is_active = 1', [cardTypeId]);
+        if (cardTypes.length === 0) {
+            return res.status(400).json({ error: '卡类型不存在或已停用' });
+        }
+        
+        const cardType = cardTypes[0];
+        
+        // 生成订单号
+        const orderNo = 'ORD' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
+        
+        // 创建订单
+        const result = await db.query(
+            'INSERT INTO orders (order_no, user_id, card_type_id, amount) VALUES (?, ?, ?, ?)',
+            [orderNo, userId || 'anonymous', cardTypeId, cardType.price]
+        );
+        
+        res.json({
+            orderId: result.insertId,
+            orderNo: orderNo,
+            amount: cardType.price,
+            cardType: cardType
+        });
+    } catch (error) {
+        console.error('创建订单失败:', error);
+        res.status(500).json({ error: '创建订单失败' });
+    }
+});
+
+// 创建支付订单
+app.post('/api/payment/create', async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        
+        if (!orderId) {
+            return res.status(400).json({ error: '订单ID不能为空' });
+        }
+        
+        // 获取订单信息
+        const orders = await db.query(`
+            SELECT o.*, ct.name as card_type_name, ct.duration_days 
+            FROM orders o 
+            JOIN card_types ct ON o.card_type_id = ct.id 
+            WHERE o.id = ?
+        `, [orderId]);
+        
+        if (orders.length === 0) {
+            return res.status(400).json({ error: '订单不存在' });
+        }
+        
+        const order = orders[0];
+        
+        if (order.status !== 'pending') {
+            return res.status(400).json({ error: '订单状态异常' });
+        }
+        
+        // 调用支付宝API创建支付订单
+        const alipayOrder = await alipay.createOrder({
+            out_trade_no: order.order_no,
+            total_amount: order.amount.toString(),
+            subject: `${order.card_type_name} - 虚拟机器人服务卡`,
+            body: `购买${order.card_type_name}，有效期${order.duration_days}天`
+        });
+        
+        res.json({
+            orderId: orderId,
+            qrCode: alipayOrder.qr_code,
+            status: 'pending'
+        });
+    } catch (error) {
+        console.error('创建支付订单失败:', error);
+        res.status(500).json({ error: '创建支付订单失败' });
+    }
+});
+
+// 查询支付状态
+app.get('/api/payment/status/:orderId', async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        
+        const orders = await db.query('SELECT * FROM orders WHERE id = ?', [orderId]);
+        if (orders.length === 0) {
+            return res.status(404).json({ error: '订单不存在' });
+        }
+        
+        const order = orders[0];
+        
+        // 如果订单已支付，直接返回成功状态
+        if (order.status === 'paid') {
+            return res.json({ status: 'TRADE_SUCCESS' });
+        }
+        
+        // 查询支付宝订单状态
+        const alipayStatus = await alipay.queryOrder(order.order_no);
+        
+        if (alipayStatus.trade_status === 'TRADE_SUCCESS') {
+            // 更新订单状态
+            await db.query(
+                'UPDATE orders SET status = "paid", alipay_trade_no = ?, paid_at = NOW() WHERE id = ?',
+                [alipayStatus.trade_no, orderId]
+            );
+            
+            // 发放卡密
+            await issueCardCode(order.order_no);
+        }
+        
+        res.json({ status: alipayStatus.trade_status || 'WAIT_BUYER_PAY' });
+    } catch (error) {
+        console.error('查询支付状态失败:', error);
+        res.status(500).json({ error: '查询支付状态失败' });
+    }
+});
+
+// 支付回调处理
+app.post('/api/payment/callback', async (req, res) => {
+    try {
+        console.log('收到支付回调:', req.body);
+        
+        // 验证支付宝签名
+        if (!alipay.verifyCallback(req.body)) {
+            console.error('支付回调签名验证失败');
+            return res.status(400).send('fail');
+        }
+        
+        const { out_trade_no, trade_status, trade_no } = req.body;
+        
+        if (trade_status === 'TRADE_SUCCESS') {
+            // 更新订单状态
+            await db.query(
+                'UPDATE orders SET status = "paid", alipay_trade_no = ?, paid_at = NOW() WHERE order_no = ?',
+                [trade_no, out_trade_no]
+            );
+            
+            // 发放卡密
+            await issueCardCode(out_trade_no);
+            
+            console.log('支付成功，卡密已发放');
+        }
+        
+        res.send('success');
+    } catch (error) {
+        console.error('支付回调处理失败:', error);
+        res.status(500).send('fail');
+    }
+});
+
+// 获取订单信息
+app.get('/api/orders/:orderId', async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        
+        const orders = await db.query(`
+            SELECT o.*, ct.name as card_type_name, ct.duration_days,
+                   up.card_code
+            FROM orders o 
+            JOIN card_types ct ON o.card_type_id = ct.id 
+            LEFT JOIN user_purchases up ON o.id = up.order_id
+            WHERE o.id = ?
+        `, [orderId]);
+        
+        if (orders.length === 0) {
+            return res.status(404).json({ error: '订单不存在' });
+        }
+        
+        res.json(orders[0]);
+    } catch (error) {
+        console.error('获取订单信息失败:', error);
+        res.status(500).json({ error: '获取订单信息失败' });
+    }
+});
+
+// 获取订单卡密
+app.get('/api/orders/:orderId/card-code', async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        
+        const purchases = await db.query(`
+            SELECT up.card_code, o.status
+            FROM user_purchases up
+            JOIN orders o ON up.order_id = o.id
+            WHERE o.id = ?
+        `, [orderId]);
+        
+        if (purchases.length === 0) {
+            return res.status(404).json({ error: '卡密不存在' });
+        }
+        
+        res.json(purchases[0]);
+    } catch (error) {
+        console.error('获取卡密失败:', error);
+        res.status(500).json({ error: '获取卡密失败' });
+    }
+});
+
+// 发放卡密
+async function issueCardCode(orderNo) {
+    try {
+        // 获取订单信息
+        const orders = await db.query(`
+            SELECT o.*, ct.name as card_type_name, ct.duration_days 
+            FROM orders o 
+            JOIN card_types ct ON o.card_type_id = ct.id 
+            WHERE o.order_no = ?
+        `, [orderNo]);
+        
+        if (orders.length === 0) {
+            throw new Error('订单不存在');
+        }
+        
+        const order = orders[0];
+        
+        if (order.status !== 'paid') {
+            throw new Error('订单未支付');
+        }
+        
+        // 获取一个未使用的卡密
+        const cardCodes = await db.query(`
+            SELECT * FROM card_codes 
+            WHERE card_type_id = ? AND status = 'unused' 
+            LIMIT 1
+        `, [order.card_type_id]);
+        
+        if (cardCodes.length === 0) {
+            throw new Error('该类型卡密已售罄');
+        }
+        
+        const cardCode = cardCodes[0];
+        
+        // 更新卡密状态
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + order.duration_days);
+        
+        await db.query(
+            'UPDATE card_codes SET status = "used", used_by = ?, used_at = NOW(), expires_at = ? WHERE id = ?',
+            [order.user_id, expiresAt, cardCode.id]
+        );
+        
+        // 记录用户购买
+        await db.query(
+            'INSERT INTO user_purchases (user_id, order_id, card_code) VALUES (?, ?, ?)',
+            [order.user_id, order.id, cardCode.code]
+        );
+        
+        console.log(`卡密发放成功: ${cardCode.code}`);
+        return cardCode.code;
+    } catch (error) {
+        console.error('发放卡密失败:', error);
+        throw error;
+    }
+}
+
 // 启动服务器
 app.listen(PORT, () => {
     console.log(`🚀 文件管理服务器运行在端口 ${PORT}`);
@@ -321,6 +596,14 @@ app.listen(PORT, () => {
     console.log(`   GET  /api/download/:id - 下载文件`);
     console.log(`   DELETE /api/files/:id - 删除文件`);
     console.log(`   GET  /api/files/search?q=关键词 - 搜索文件`);
+    console.log(`📋 发卡系统API:`);
+    console.log(`   GET  /api/card-types - 获取卡类型列表`);
+    console.log(`   POST /api/orders - 创建订单`);
+    console.log(`   POST /api/payment/create - 创建支付订单`);
+    console.log(`   GET  /api/payment/status/:orderId - 查询支付状态`);
+    console.log(`   POST /api/payment/callback - 支付回调`);
+    console.log(`   GET  /api/orders/:orderId - 获取订单信息`);
+    console.log(`   GET  /api/orders/:orderId/card-code - 获取订单卡密`);
 });
 
 // 优雅关闭

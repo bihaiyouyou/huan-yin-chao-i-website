@@ -1,0 +1,358 @@
+/* 支付页面专用样式 */
+.payment-section {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    padding: 40px 0;
+    min-height: 100vh;
+}
+
+.payment-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.payment-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.payment-header h1 {
+    font-size: 32px;
+    color: #fff;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.payment-header p {
+    color: #ccc;
+    font-size: 16px;
+}
+
+.payment-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+/* 订单信息 */
+.order-info {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 30px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.order-info h3 {
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.order-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item .label {
+    color: #aaa;
+    font-size: 14px;
+}
+
+.detail-item .value {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.detail-item .value.price {
+    color: #ff6b35;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* 支付区域 */
+.payment-area {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.payment-method h3 {
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.payment-option.active {
+    border-color: #ff6b35;
+    background: rgba(255, 107, 53, 0.1);
+}
+
+.option-icon {
+    font-size: 24px;
+    margin-right: 15px;
+}
+
+.option-info {
+    flex: 1;
+}
+
+.option-info h4 {
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.option-info p {
+    color: #aaa;
+    font-size: 14px;
+}
+
+.option-check {
+    color: #ff6b35;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* 二维码支付 */
+.qr-payment {
+    text-align: center;
+}
+
+.qr-container {
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.qr-code {
+    margin-bottom: 20px;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-code img {
+    max-width: 200px;
+    max-height: 200px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.qr-instructions {
+    text-align: left;
+    color: #333;
+}
+
+.qr-instructions h4 {
+    color: #333;
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.qr-instructions ol {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.6;
+    padding-left: 20px;
+}
+
+.qr-instructions li {
+    margin-bottom: 5px;
+}
+
+/* 加载动画 */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #ff6b35;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 支付状态 */
+.payment-status {
+    text-align: center;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+#statusPending {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+#statusSuccess {
+    background: rgba(76, 175, 80, 0.1);
+    color: #4CAF50;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+#statusFailed {
+    background: rgba(244, 67, 54, 0.1);
+    color: #f44336;
+    border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.status-icon {
+    font-size: 20px;
+}
+
+/* 支付页脚 */
+.payment-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.back-btn, .refresh-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.back-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.refresh-btn {
+    background: linear-gradient(45deg, #ff6b35, #f7931e);
+    color: white;
+}
+
+.refresh-btn:hover {
+    background: linear-gradient(45deg, #e55a2b, #e8841a);
+    transform: translateY(-2px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .payment-container {
+        margin: 20px;
+        padding: 20px;
+    }
+    
+    .payment-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .payment-header h1 {
+        font-size: 24px;
+    }
+    
+    .qr-container {
+        padding: 20px;
+    }
+    
+    .qr-code {
+        min-height: 150px;
+    }
+    
+    .qr-code img {
+        max-width: 150px;
+        max-height: 150px;
+    }
+    
+    .payment-footer {
+        flex-direction: column;
+    }
+}
+
+/* 错误提示 */
+.error-message {
+    background: #f44336;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+/* 成功提示 */
+.success-message {
+    background: #4CAF50;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: center;
+}

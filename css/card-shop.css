@@ -1,0 +1,285 @@
+/* 发卡页面专用样式 */
+.card-shop-section {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    padding: 80px 0;
+    min-height: 100vh;
+}
+
+.card-shop-title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.card-shop-title .main {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.card-shop-title .sub {
+    font-size: 18px;
+    color: #888;
+    letter-spacing: 2px;
+}
+
+.card-shop-description {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.card-shop-description p {
+    font-size: 18px;
+    color: #ccc;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* 卡片网格 */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-bottom: 80px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 卡片样式 */
+.card-item {
+    background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ff6b35, #f7931e);
+}
+
+.card-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border-color: #ff6b35;
+}
+
+.card-item.popular {
+    border-color: #ff6b35;
+    transform: scale(1.05);
+}
+
+.card-item.popular::before {
+    background: linear-gradient(90deg, #ff6b35, #f7931e, #ff6b35);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.card-header {
+    margin-bottom: 20px;
+}
+
+.card-header h3 {
+    font-size: 24px;
+    color: #fff;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.price {
+    font-size: 36px;
+    color: #ff6b35;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.price-currency {
+    font-size: 18px;
+    vertical-align: top;
+}
+
+.card-content {
+    margin-bottom: 25px;
+}
+
+.card-content p {
+    color: #ccc;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.card-features {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.card-features li {
+    color: #aaa;
+    margin-bottom: 5px;
+    font-size: 14px;
+    position: relative;
+    padding-left: 20px;
+}
+
+.card-features li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.buy-btn {
+    background: linear-gradient(45deg, #ff6b35, #f7931e);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.buy-btn:hover {
+    background: linear-gradient(45deg, #e55a2b, #e8841a);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+}
+
+.buy-btn:active {
+    transform: translateY(0);
+}
+
+/* 服务特色 */
+.card-shop-features {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.card-shop-features h3 {
+    font-size: 32px;
+    color: #fff;
+    margin-bottom: 40px;
+    font-weight: bold;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.feature-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 30px 20px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.feature-item h4 {
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.feature-item p {
+    color: #ccc;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .card-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 20px;
+    }
+    
+    .card-item {
+        padding: 20px;
+    }
+    
+    .card-shop-title .main {
+        font-size: 36px;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+/* 加载动画 */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+}
+
+.loading::after {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 4px solid #333;
+    border-top: 4px solid #ff6b35;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 错误提示 */
+.error-message {
+    background: #f44336;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+/* 成功提示 */
+.success-message {
+    background: #4CAF50;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    text-align: center;
+}
