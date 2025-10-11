@@ -35,7 +35,7 @@ echo.
 echo ⚠️  请记录下生成的URL，稍后需要更新配置文件
 echo.
 
-tailscale funnel --port=3000
+tailscale funnel 3000
 
 echo.
 echo 📝 请将生成的URL更新到 js/config.js 文件中

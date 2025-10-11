@@ -5,7 +5,7 @@ const mysql = require('mysql2/promise');
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: '', // 请根据实际情况修改
+    password: '8888123456', // 请根据实际情况修改
     database: 'card_system',
     charset: 'utf8mb4',
     timezone: '+08:00'

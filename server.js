@@ -4,7 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs-extra');
 const { v4: uuidv4 } = require('uuid');
-const db = require('./config/database');
+const db = require('./config/database-sqlite');
 const alipay = require('./config/alipay');
 
 const app = express();
@@ -585,26 +585,41 @@ async function issueCardCode(orderNo) {
     }
 }
 
+// 初始化数据库并启动服务器
+async function startServer() {
+    try {
+        // 初始化数据库
+        console.log('🔧 初始化数据库...');
+        await db.init();
+        
+        // 启动服务器
+        app.listen(PORT, () => {
+            console.log(`🚀 文件管理服务器运行在端口 ${PORT}`);
+            console.log(`📁 上传目录: ${uploadDir}`);
+            console.log(`🌐 访问地址: http://localhost:${PORT}`);
+            console.log(`📋 API文档:`);
+            console.log(`   GET  /api/files - 获取文件列表`);
+            console.log(`   POST /api/upload - 上传文件`);
+            console.log(`   GET  /api/download/:id - 下载文件`);
+            console.log(`   DELETE /api/files/:id - 删除文件`);
+            console.log(`   GET  /api/files/search?q=关键词 - 搜索文件`);
+            console.log(`📋 发卡系统API:`);
+            console.log(`   GET  /api/card-types - 获取卡类型列表`);
+            console.log(`   POST /api/orders - 创建订单`);
+            console.log(`   POST /api/payment/create - 创建支付订单`);
+            console.log(`   GET  /api/payment/status/:orderId - 查询支付状态`);
+            console.log(`   POST /api/payment/callback - 支付回调`);
+            console.log(`   GET  /api/orders/:orderId - 获取订单信息`);
+            console.log(`   GET  /api/orders/:orderId/card-code - 获取订单卡密`);
+        });
+    } catch (error) {
+        console.error('❌ 服务器启动失败:', error);
+        process.exit(1);
+    }
+}
+
 // 启动服务器
-app.listen(PORT, () => {
-    console.log(`🚀 文件管理服务器运行在端口 ${PORT}`);
-    console.log(`📁 上传目录: ${uploadDir}`);
-    console.log(`🌐 访问地址: http://localhost:${PORT}`);
-    console.log(`📋 API文档:`);
-    console.log(`   GET  /api/files - 获取文件列表`);
-    console.log(`   POST /api/upload - 上传文件`);
-    console.log(`   GET  /api/download/:id - 下载文件`);
-    console.log(`   DELETE /api/files/:id - 删除文件`);
-    console.log(`   GET  /api/files/search?q=关键词 - 搜索文件`);
-    console.log(`📋 发卡系统API:`);
-    console.log(`   GET  /api/card-types - 获取卡类型列表`);
-    console.log(`   POST /api/orders - 创建订单`);
-    console.log(`   POST /api/payment/create - 创建支付订单`);
-    console.log(`   GET  /api/payment/status/:orderId - 查询支付状态`);
-    console.log(`   POST /api/payment/callback - 支付回调`);
-    console.log(`   GET  /api/orders/:orderId - 获取订单信息`);
-    console.log(`   GET  /api/orders/:orderId/card-code - 获取订单卡密`);
-});
+startServer();
 
 // 优雅关闭
 process.on('SIGTERM', () => {

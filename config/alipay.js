@@ -1,101 +1,65 @@
-// 支付宝配置
-const AlipaySdk = require('alipay-sdk').default;
-const AlipayFormData = require('alipay-sdk/lib/form').default;
+// 支付宝配置 - 简化版本（用于测试）
+console.log('📱 支付宝配置加载（测试模式）');
 
-// 支付宝配置（请替换为实际的配置信息）
+// 模拟支付宝配置
 const alipayConfig = {
-    appId: 'your_app_id', // 支付宝应用ID
-    privateKey: `-----BEGIN PRIVATE KEY-----
-your_private_key_here
------END PRIVATE KEY-----`, // 应用私钥
-    alipayPublicKey: `-----BEGIN PUBLIC KEY-----
-your_alipay_public_key_here
------END PUBLIC KEY-----`, // 支付宝公钥
-    gateway: 'https://openapi.alipay.com/gateway.do', // 正式环境
-    // gateway: 'https://openapi.alipaydev.com/gateway.do', // 沙箱环境
-    signType: 'RSA2',
-    charset: 'utf-8',
-    version: '1.0',
-    timeout: 5000
+    appId: 'test_app_id',
+    privateKey: 'test_private_key',
+    alipayPublicKey: 'test_public_key',
+    gateway: 'https://openapi.alipaydev.com/gateway.do',
+    notifyUrl: 'http://localhost:3000/api/payment/callback'
 };
 
-// 创建支付宝SDK实例
-const alipaySdk = new AlipaySdk(alipayConfig);
-
-// 创建支付订单
+// 创建支付订单（模拟版本）
 async function createOrder(orderData) {
     try {
-        const formData = new AlipayFormData();
-        formData.setMethod('get');
+        console.log('📱 模拟创建支付订单:', orderData);
         
-        // 设置支付参数
-        formData.addField('bizContent', {
-            outTradeNo: orderData.out_trade_no,
-            totalAmount: orderData.total_amount,
-            subject: orderData.subject,
-            body: orderData.body,
-            productCode: 'FACE_TO_FACE_PAYMENT', // 当面付产品码
-            timeoutExpress: '10m' // 订单超时时间
-        });
+        // 模拟返回二维码数据（实际应该是支付宝返回的二维码）
+        const mockQrCode = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==`;
         
-        formData.addField('notifyUrl', 'https://your-domain.com/api/payment/callback'); // 支付回调地址
-        
-        // 调用支付宝API
-        const result = await alipaySdk.exec(
-            'alipay.trade.precreate', // 预创建订单接口
-            {},
-            { formData: formData }
-        );
-        
-        return result;
+        return {
+            qr_code: mockQrCode,
+            out_trade_no: orderData.out_trade_no
+        };
     } catch (error) {
         console.error('创建支付订单失败:', error);
         throw error;
     }
 }
 
-// 查询订单状态
+// 查询订单状态（模拟版本）
 async function queryOrder(outTradeNo) {
     try {
-        const formData = new AlipayFormData();
-        formData.setMethod('get');
+        console.log('🔍 模拟查询订单状态:', outTradeNo);
         
-        formData.addField('bizContent', {
-            outTradeNo: outTradeNo
-        });
-        
-        const result = await alipaySdk.exec(
-            'alipay.trade.query',
-            {},
-            { formData: formData }
-        );
-        
-        return result;
+        // 模拟返回等待支付状态
+        // 在实际环境中，这里应该调用支付宝API查询真实状态
+        return {
+            trade_status: 'WAIT_BUYER_PAY',
+            trade_no: null
+        };
     } catch (error) {
         console.error('查询订单状态失败:', error);
         throw error;
     }
 }
 
-// 验证回调签名
+// 验证回调签名（模拟版本）
 function verifyCallback(params) {
     try {
-        return alipaySdk.checkNotifySign(params);
+        console.log('🔐 模拟验证回调签名:', params);
+        // 模拟验证通过
+        // 在实际环境中，这里应该验证支付宝的签名
+        return true;
     } catch (error) {
         console.error('验证回调签名失败:', error);
         return false;
     }
 }
 
-// 生成二维码数据
-function generateQRCodeData(qrCode) {
-    return `alipays://platformapi/startapp?saId=10000007&qrcode=${encodeURIComponent(qrCode)}`;
-}
-
 module.exports = {
-    alipaySdk,
     createOrder,
     queryOrder,
-    verifyCallback,
-    generateQRCodeData
+    verifyCallback
 };
