@@ -204,12 +204,31 @@
         // 确保页面加载完成后执行
         document.addEventListener('DOMContentLoaded', function() {
             console.log('支付页面HTML加载完成');
+            console.log('refreshPayment函数存在:', typeof refreshPayment !== 'undefined');
+            console.log('initializePayment函数存在:', typeof initializePayment !== 'undefined');
+            
             // 如果payment.js没有正确加载，这里会显示错误
             if (typeof initializePayment === 'undefined') {
                 console.error('payment.js没有正确加载');
                 alert('支付页面JavaScript加载失败，请刷新页面重试');
             }
         });
+        
+        // 全局测试函数
+        window.testPayment = function() {
+            console.log('=== 支付页面测试 ===');
+            console.log('refreshPayment函数:', typeof refreshPayment);
+            console.log('goBack函数:', typeof goBack);
+            console.log('当前订单ID:', currentOrderId);
+            
+            // 测试刷新支付
+            if (typeof refreshPayment === 'function') {
+                console.log('调用refreshPayment函数');
+                refreshPayment();
+            } else {
+                console.error('refreshPayment函数不存在');
+            }
+        };
     </script>
 </body>
 </html>
