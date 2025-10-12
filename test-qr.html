@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二维码测试</title>
+    <style>
+        body { background: #1a1a1a; color: white; padding: 20px; }
+        .qr-container { text-align: center; margin: 20px; }
+        .qr-image { max-width: 200px; border: 2px solid #ff6b35; border-radius: 8px; background: white; padding: 10px; }
+        button { padding: 10px 20px; margin: 10px; background: #ff6b35; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>二维码测试页面</h1>
+    <div class="qr-container">
+        <img id="qrImage" class="qr-image" style="display: none;" alt="测试二维码">
+    </div>
+    <button onclick="testQR()">测试二维码显示</button>
+    <div id="result"></div>
+
+    <script src="js/config.js"></script>
+    <script>
+        async function testQR() {
+            try {
+                console.log('开始测试二维码...');
+                const response = await fetch(config.getApiUrl('/api/payment/create'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId: 32 })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('API响应:', data);
+                
+                const qrImage = document.getElementById('qrImage');
+                qrImage.src = data.qrCode;
+                qrImage.style.display = 'block';
+                
+                document.getElementById('result').innerHTML = '<p style="color: green;">二维码加载成功！</p>';
+            } catch (error) {
+                console.error('测试失败:', error);
+                document.getElementById('result').innerHTML = '<p style="color: red;">错误: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>

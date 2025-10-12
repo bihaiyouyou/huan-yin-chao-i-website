@@ -4,6 +4,8 @@ let paymentCheckInterval = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('支付页面加载完成');
+    console.log('当前URL:', window.location.href);
+    console.log('URL参数:', window.location.search);
     initializePayment();
 });
 
@@ -188,6 +190,27 @@ function goBack() {
         window.location.href = 'card-shop.html';
     }
 }
+
+// 全局测试函数
+window.testPayment = function() {
+    console.log('=== 支付页面测试 ===');
+    console.log('当前订单ID:', currentOrderId);
+    console.log('订单号元素:', document.getElementById('orderNumber'));
+    console.log('二维码元素:', document.getElementById('qrCodeImage'));
+    console.log('加载元素:', document.getElementById('qrLoading'));
+    console.log('刷新按钮:', document.querySelector('.refresh-btn'));
+    
+    // 测试订单号设置
+    if (currentOrderId) {
+        document.getElementById('orderNumber').textContent = currentOrderId;
+        console.log('订单号已设置为:', currentOrderId);
+    }
+    
+    // 测试二维码显示
+    const testQRCode = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+    displayQRCode(testQRCode);
+    console.log('测试二维码已显示');
+};
 
 // 显示错误信息
 function showError(message) {
