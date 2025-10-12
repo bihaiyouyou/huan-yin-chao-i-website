@@ -6,6 +6,11 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('支付页面加载完成');
     console.log('当前URL:', window.location.href);
     console.log('URL参数:', window.location.search);
+    
+    // 确保函数在全局作用域中可用
+    window.refreshPayment = refreshPayment;
+    window.goBack = goBack;
+    
     initializePayment();
 });
 
@@ -39,12 +44,7 @@ function initializePayment() {
     
     if (productNameEl) productNameEl.textContent = cardName || '虚拟机器人服务卡';
     if (productPriceEl) productPriceEl.textContent = `¥${price || '0.00'}`;
-    if (orderNumberEl) {
-        orderNumberEl.textContent = currentOrderId;
-        console.log('订单号已设置为:', currentOrderId);
-    } else {
-        console.error('找不到订单号元素');
-    }
+    if (orderNumberEl) orderNumberEl.textContent = currentOrderId;
     
     console.log('订单信息已设置');
     
@@ -233,9 +233,7 @@ function goBack() {
     }
 }
 
-// 确保函数在全局作用域中可用
-window.refreshPayment = refreshPayment;
-window.goBack = goBack;
+// 全局测试函数
 window.testPayment = function() {
     console.log('=== 支付页面测试 ===');
     console.log('当前订单ID:', currentOrderId);
