@@ -116,23 +116,34 @@ function insertInitialData() {
             ['年卡', 365, 300.00, '全功能+VIP支持，有效期365天']
         ];
 
-        // 先清空现有数据，避免重复
-        db.run('DELETE FROM card_types');
-        
-        const insertCardTypes = db.prepare(`
-            INSERT INTO card_types (name, duration_days, price, description) 
-            VALUES (?, ?, ?, ?)
-        `);
-
-        cardTypes.forEach(cardType => {
-            insertCardTypes.run(cardType, (err) => {
-                if (err) {
-                    console.error('插入卡类型失败:', err);
-                }
-            });
+        // 检查是否已有数据，如果没有才插入
+        db.get('SELECT COUNT(*) as count FROM card_types', (err, row) => {
+            if (err) {
+                console.error('检查card_types数据失败:', err);
+                return;
+            }
+            
+            if (row.count === 0) {
+                console.log('📝 插入初始卡类型数据...');
+                const insertCardTypes = db.prepare(`
+                    INSERT INTO card_types (name, duration_days, price, description) 
+                    VALUES (?, ?, ?, ?)
+                `);
+                
+                cardTypes.forEach(cardType => {
+                    insertCardTypes.run(cardType, (err) => {
+                        if (err) {
+                            console.error('插入卡类型失败:', err);
+                        }
+                    });
+                });
+                
+                insertCardTypes.finalize();
+                console.log('✅ 初始卡类型数据插入完成');
+            } else {
+                console.log('📋 card_types表已有数据，跳过初始化');
+            }
         });
-
-        insertCardTypes.finalize();
 
         // 插入测试卡密数据
         const cardCodes = [];

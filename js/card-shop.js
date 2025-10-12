@@ -143,11 +143,18 @@ async function buyCard(cardTypeId, cardName, price) {
         });
         
         if (!orderResponse.ok) {
-            throw new Error(`创建订单失败: ${orderResponse.status}`);
+            const errorText = await orderResponse.text();
+            console.error('订单创建失败:', orderResponse.status, errorText);
+            throw new Error(`创建订单失败: ${orderResponse.status} - ${errorText}`);
         }
         
         const order = await orderResponse.json();
         console.log('订单创建成功:', order);
+        
+        if (!order.orderId) {
+            console.error('订单响应中缺少orderId:', order);
+            throw new Error('订单创建成功但缺少订单ID');
+        }
         
         // 跳转到支付页面
         const paymentUrl = `payment.html?orderId=${order.orderId}&cardName=${encodeURIComponent(cardName)}&price=${price}`;

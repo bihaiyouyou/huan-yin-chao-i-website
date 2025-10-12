@@ -703,16 +703,14 @@ app.post('/api/admin/card-codes', async (req, res) => {
         }
         
         // 插入卡密
-        const insertStmt = db.prepare(`
-            INSERT INTO card_codes (card_type_id, code, status) 
-            VALUES (?, ?, 'unused')
-        `);
-        
         let successCount = 0;
         for (const code of cardCodes) {
             if (code && code.trim()) {
                 try {
-                    await db.run(insertStmt, [cardTypeId, code.trim()]);
+                    await db.run(
+                        'INSERT INTO card_codes (card_type_id, code, status) VALUES (?, ?, ?)',
+                        [cardTypeId, code.trim(), 'unused']
+                    );
                     successCount++;
                 } catch (err) {
                     console.error('插入卡密失败:', code, err);
