@@ -200,5 +200,16 @@
     <script src="js/config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/payment.js"></script>
+    <script>
+        // 确保页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('支付页面HTML加载完成');
+            // 如果payment.js没有正确加载，这里会显示错误
+            if (typeof initializePayment === 'undefined') {
+                console.error('payment.js没有正确加载');
+                alert('支付页面JavaScript加载失败，请刷新页面重试');
+            }
+        });
+    </script>
 </body>
 </html>
