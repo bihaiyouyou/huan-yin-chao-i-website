@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单确认 - 幻银超i桌面虚拟机器人</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/payment.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="webNavTable">
+        <div class="webNav">
+            <div class="webNavContent">
+                <div class="webNavLogo">
+                    <img src="images/logo.png" alt="幻银超i">
+                </div>
+                <div class="webNavMenu">
+                    <div class="item">
+                        <a href="index.html">首页</a>
+                    </div>
+                    <div class="itemSep"><span>|</span></div>
+                    <div class="item">
+                        <a href="business.html">公司业务</a>
+                    </div>
+                    <div class="itemSep"><span>|</span></div>
+                    <div class="item">
+                        <a href="news.html">新闻资讯</a>
+                    </div>
+                    <div class="itemSep"><span>|</span></div>
+                    <div class="item">
+                        <a href="about.html">核心技术</a>
+                    </div>
+                    <div class="itemSep"><span>|</span></div>
+                    <div class="item">
+                        <a href="about.html">关于我们</a>
+                    </div>
+                    <div class="itemSep"><span>|</span></div>
+                    <div class="item">
+                        <a href="files.html">软件下载</a>
+                    </div>
+                    <div class="itemSep"><span>|</span></div>
+                    <div class="item">
+                        <a href="card-shop.html">服务卡</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 支付页面主要内容 -->
+    <div class="payment-section">
+        <div class="payment-container">
+            <div class="payment-header">
+                <h1>订单确认</h1>
+                <p>请确认订单信息并完成支付</p>
+            </div>
+
+            <div class="payment-content">
+                <!-- 订单详情 -->
+                <div class="order-info">
+                    <h3>订单详情</h3>
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <span class="label">商品名称：</span>
+                            <span class="value" id="productName">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">订单号：</span>
+                            <span class="value" id="orderNumber">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">支付金额：</span>
+                            <span class="value price" id="productPrice">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">支付方式：</span>
+                            <span class="value">支付宝扫码支付</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 支付方式 -->
+                <div class="payment-method">
+                    <h3>支付方式</h3>
+                    <div class="payment-options">
+                        <div class="payment-option selected">
+                            <div class="option-icon">💰</div>
+                            <div class="option-text">
+                                <div class="option-title">支付宝扫码支付</div>
+                                <div class="option-desc">安全便捷，支持花呗分期</div>
+                            </div>
+                            <div class="option-check">✓</div>
+                        </div>
+                    </div>
+
+                    <!-- 二维码区域 -->
+                    <div class="qr-container">
+                        <div class="qr-code" id="qrCodeContainer">
+                            <div class="loading" id="qrLoading">
+                                <div class="spinner"></div>
+                                <p>正在生成支付二维码...</p>
+                            </div>
+                            <img id="qrCodeImage" style="display: none;" alt="支付二维码">
+                        </div>
+                        <div class="qr-instructions">
+                            <h4>支付步骤：</h4>
+                            <ol>
+                                <li>打开支付宝APP</li>
+                                <li>扫描上方二维码</li>
+                                <li>确认支付金额</li>
+                                <li>完成支付</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- 支付状态 -->
+                    <div class="payment-status">
+                        <button class="status-btn pending" id="statusPending">
+                            <div class="status-icon">⏳</div>
+                            <div class="status-text">等待支付中...</div>
+                        </button>
+                        <button class="status-btn success" id="statusSuccess" style="display: none;">
+                            <div class="status-icon">✅</div>
+                            <div class="status-text">支付成功</div>
+                        </button>
+                        <button class="status-btn failed" id="statusFailed" style="display: none;">
+                            <div class="status-icon">❌</div>
+                            <div class="status-text">支付失败</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="payment-footer">
+                <button class="back-btn" onclick="goBack()">返回上页</button>
+                <button class="refresh-btn" onclick="refreshPayment()">刷新支付</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="webFooter">
+        <div class="footer-content">
+            <div class="footer-nav-item footer-business">
+                <h4><a href="business.html">公司业务</a></h4>
+                <div class="sub-items">
+                    <div>产品中心</div>
+                    <div>成功案例</div>
+                </div>
+            </div>
+
+            <div class="footer-nav-item footer-news">
+                <h4><a href="news.html">新闻资讯</a></h4>
+                <div class="sub-items">
+                    <div>公司新闻</div>
+                    <div>行业动态</div>
+                </div>
+            </div>
+
+            <div class="footer-nav-item footer-tech">
+                <h4><a href="about.html">核心技术</a></h4>
+                <div class="sub-items">
+                    <div>AI技术</div>
+                    <div>虚拟机器人</div>
+                </div>
+            </div>
+
+            <div class="footer-nav-item footer-about">
+                <h4><a href="about.html">关于我们</a></h4>
+                <div class="sub-items">
+                    <div>公司简介</div>
+                    <div>发展历程</div>
+                </div>
+            </div>
+
+            <div class="footer-nav-item footer-contact">
+                <h4>联系我们</h4>
+                <div class="footer-contact-info">
+                    <div class="footer-address">地址：北京市朝阳区科技园区</div>
+                    <div class="footer-phone">电话：13122568849</div>
+                    <div class="footer-email">邮箱：contact@huan-yin-chao-i.com</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-info">
+            <div class="footer-copyright">
+                ©2025 - 幻银超i——桌面虚拟机器人 版权所有
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        // 支付页面JavaScript - 基于简化页面的成功经验
+        let currentOrderId = null;
+        let paymentCheckInterval = null;
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('新支付页面加载完成');
+            initializePayment();
+        });
+        
+        function initializePayment() {
+            // 获取URL参数
+            const urlParams = new URLSearchParams(window.location.search);
+            currentOrderId = urlParams.get('orderId');
+            const cardName = urlParams.get('cardName');
+            const price = urlParams.get('price');
+            
+            console.log('URL参数:', { currentOrderId, cardName, price });
+            
+            if (!currentOrderId) {
+                console.error('订单ID缺失');
+                showError('订单ID缺失，请重新选择商品');
+                return;
+            }
+            
+            // 设置订单信息
+            document.getElementById('productName').textContent = cardName || '虚拟机器人服务卡';
+            document.getElementById('productPrice').textContent = `¥${price || '0.00'}`;
+            document.getElementById('orderNumber').textContent = currentOrderId;
+            
+            console.log('订单信息已设置');
+            
+            // 开始支付流程
+            startPayment();
+        }
+        
+        async function startPayment() {
+            try {
+                console.log('开始创建支付订单:', currentOrderId);
+                console.log('API URL:', config.getApiUrl('/api/payment/create'));
+                
+                const response = await fetch(config.getApiUrl('/api/payment/create'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId: currentOrderId })
+                });
+                
+                console.log('API响应状态:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`创建支付订单失败: ${response.status}`);
+                }
+                
+                const paymentData = await response.json();
+                console.log('支付订单创建成功:', paymentData);
+                console.log('二维码数据:', paymentData.qrCode ? '有数据' : '无数据');
+                
+                // 显示二维码
+                displayQRCode(paymentData.qrCode);
+                
+                // 开始轮询支付状态
+                startPaymentStatusCheck();
+                
+            } catch (error) {
+                console.error('创建支付订单失败:', error);
+                showError('创建支付订单失败，请重试');
+            }
+        }
+        
+        function displayQRCode(qrCode) {
+            console.log('开始显示二维码:', qrCode ? '有数据' : '无数据');
+            const qrLoading = document.getElementById('qrLoading');
+            const qrImage = document.getElementById('qrCodeImage');
+            
+            console.log('二维码元素存在:', !!qrImage);
+            console.log('加载元素存在:', !!qrLoading);
+            
+            if (qrCode && qrImage) {
+                console.log('设置二维码图片');
+                qrLoading.style.display = 'none';
+                qrImage.src = qrCode;
+                qrImage.style.display = 'block';
+                console.log('二维码显示完成');
+            } else {
+                console.error('二维码数据或元素缺失');
+                if (qrLoading) qrLoading.style.display = 'flex';
+                showError('二维码生成失败');
+            }
+        }
+        
+        function startPaymentStatusCheck() {
+            if (paymentCheckInterval) {
+                clearInterval(paymentCheckInterval);
+            }
+            
+            paymentCheckInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(config.getApiUrl(`/api/payment/status/${currentOrderId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.status === 'paid') {
+                            clearInterval(paymentCheckInterval);
+                            showPaymentSuccess();
+                        }
+                    }
+                } catch (error) {
+                    console.error('检查支付状态失败:', error);
+                }
+            }, 3000);
+        }
+        
+        function showPaymentSuccess() {
+            document.getElementById('statusPending').style.display = 'none';
+            document.getElementById('statusSuccess').style.display = 'flex';
+            document.getElementById('statusFailed').style.display = 'none';
+        }
+        
+        function showPaymentFailed() {
+            document.getElementById('statusPending').style.display = 'none';
+            document.getElementById('statusSuccess').style.display = 'none';
+            document.getElementById('statusFailed').style.display = 'flex';
+        }
+        
+        function refreshPayment() {
+            console.log('刷新支付被点击');
+            
+            if (paymentCheckInterval) {
+                clearInterval(paymentCheckInterval);
+                console.log('清除支付状态检查定时器');
+            }
+            
+            // 重置状态
+            document.getElementById('statusPending').style.display = 'flex';
+            document.getElementById('statusSuccess').style.display = 'none';
+            document.getElementById('statusFailed').style.display = 'none';
+            
+            // 隐藏二维码，显示加载动画
+            const qrLoading = document.getElementById('qrLoading');
+            const qrImage = document.getElementById('qrCodeImage');
+            if (qrLoading) qrLoading.style.display = 'flex';
+            if (qrImage) qrImage.style.display = 'none';
+            
+            console.log('重新开始支付流程');
+            startPayment();
+        }
+        
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'card-shop.html';
+            }
+        }
+        
+        function showError(message) {
+            const qrContainer = document.getElementById('qrCodeContainer');
+            if (qrContainer) {
+                qrContainer.innerHTML = `
+                    <div style="text-align: center; color: #f44336; padding: 20px;">
+                        <h4>错误</h4>
+                        <p>${message}</p>
+                        <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 16px; background: #fff; color: #f44336; border: none; border-radius: 4px; cursor: pointer;">
+                            刷新页面
+                        </button>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
