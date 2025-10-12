@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二维码测试</title>
+    <style>
+        body { 
+            background: #1a1a1a; 
+            color: white; 
+            padding: 20px; 
+            font-family: Arial, sans-serif; 
+            text-align: center;
+        }
+        .qr-container {
+            margin: 20px auto;
+            padding: 20px;
+            background: #2d2d2d;
+            border-radius: 10px;
+            max-width: 400px;
+        }
+        .qr-image {
+            width: 300px;
+            height: 300px;
+            border: 3px solid #ff6b35;
+            border-radius: 10px;
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            display: block;
+        }
+        button {
+            padding: 15px 30px;
+            background: #ff6b35;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #e55a2b;
+        }
+        .loading {
+            color: #ff6b35;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 二维码显示测试</h1>
+    
+    <div class="qr-container">
+        <h3>测试二维码显示</h3>
+        <div class="loading" id="loading">正在生成二维码...</div>
+        <img id="qrImage" class="qr-image" style="display: none;" alt="支付二维码">
+        <br>
+        <button onclick="generateQR()">生成二维码</button>
+        <button onclick="clearQR()">清除二维码</button>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        async function generateQR() {
+            const loading = document.getElementById('loading');
+            const qrImage = document.getElementById('qrImage');
+            
+            try {
+                loading.style.display = 'block';
+                qrImage.style.display = 'none';
+                
+                console.log('开始生成二维码...');
+                
+                const response = await fetch(config.getApiUrl('/api/payment/create'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId: 37 })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('二维码数据:', data.qrCode);
+                    
+                    loading.style.display = 'none';
+                    qrImage.src = data.qrCode;
+                    qrImage.style.display = 'block';
+                    
+                    console.log('二维码设置完成');
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error('生成二维码失败:', error);
+                loading.textContent = '生成失败: ' + error.message;
+            }
+        }
+        
+        function clearQR() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('qrImage').style.display = 'none';
+        }
+        
+        // 页面加载时自动生成
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面加载完成，自动生成二维码');
+            generateQR();
+        });
+    </script>
+</body>
+</html>
