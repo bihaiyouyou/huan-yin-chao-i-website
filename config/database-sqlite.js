@@ -117,7 +117,7 @@ function insertInitialData() {
         ];
 
         // 先清空现有数据，避免重复
-        await db.run('DELETE FROM card_types');
+        db.run('DELETE FROM card_types');
         
         const insertCardTypes = db.prepare(`
             INSERT INTO card_types (name, duration_days, price, description) 
