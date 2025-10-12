@@ -103,6 +103,17 @@ async function buyCard(cardTypeId, cardName, price) {
         // 生成用户ID（实际应用中应该从登录状态获取）
         const userId = generateUserId();
         
+        // 映射cardTypeId到数据库中的实际ID
+        const cardTypeMapping = {
+            1: 37, // 日卡
+            2: 38, // 月卡
+            3: 39, // 季卡
+            4: 40  // 年卡
+        };
+        
+        const actualCardTypeId = cardTypeMapping[cardTypeId] || cardTypeId;
+        console.log('映射后的cardTypeId:', actualCardTypeId);
+        
         // 创建订单
         const orderResponse = await fetch(config.getApiUrl('/api/orders'), {
             method: 'POST',
@@ -110,7 +121,7 @@ async function buyCard(cardTypeId, cardName, price) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                cardTypeId: cardTypeId,
+                cardTypeId: actualCardTypeId,
                 userId: userId
             })
         });
