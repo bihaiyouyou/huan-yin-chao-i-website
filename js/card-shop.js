@@ -163,7 +163,14 @@ async function buyCard(cardTypeId, cardName, price) {
         
     } catch (error) {
         console.error('购买失败:', error);
-        showError('购买失败，请重试');
+        console.error('错误详情:', {
+            message: error.message,
+            stack: error.stack,
+            cardTypeId: cardTypeId,
+            cardName: cardName,
+            price: price
+        });
+        showError(`购买失败: ${error.message}`);
     }
 }
 
@@ -203,16 +210,37 @@ function setupEventListeners() {
 
 // 显示错误信息
 function showError(message) {
-    const cardGrid = document.getElementById('cardGrid');
-    cardGrid.innerHTML = `
-        <div class="error-message">
-            <h4>错误</h4>
-            <p>${message}</p>
-            <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 16px; background: #fff; color: #f44336; border: none; border-radius: 4px; cursor: pointer;">
-                刷新页面
-            </button>
-        </div>
+    // 创建临时错误提示
+    const errorDiv = document.createElement('div');
+    errorDiv.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #f44336;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        z-index: 1000;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     `;
+    errorDiv.innerHTML = `
+        <h4 style="margin: 0 0 10px 0;">错误</h4>
+        <p style="margin: 0 0 15px 0;">${message}</p>
+        <button onclick="this.parentElement.remove()" style="padding: 8px 16px; background: #fff; color: #f44336; border: none; border-radius: 4px; cursor: pointer;">
+            关闭
+        </button>
+    `;
+    
+    document.body.appendChild(errorDiv);
+    
+    // 3秒后自动关闭
+    setTimeout(() => {
+        if (errorDiv.parentElement) {
+            errorDiv.remove();
+        }
+    }, 3000);
 }
 
 // 显示成功信息
