@@ -17,15 +17,24 @@ function initializePayment() {
     const cardName = urlParams.get('cardName');
     const price = urlParams.get('price');
     
+    console.log('URL参数解析:', { currentOrderId, cardName, price });
+    
     if (!currentOrderId) {
+        console.error('订单ID缺失');
         showError('订单ID缺失，请重新选择商品');
         return;
     }
     
     // 显示订单信息
-    document.getElementById('productName').textContent = cardName || '虚拟机器人服务卡';
-    document.getElementById('productPrice').textContent = `¥${price || '0.00'}`;
-    document.getElementById('orderNumber').textContent = currentOrderId;
+    const productNameEl = document.getElementById('productName');
+    const productPriceEl = document.getElementById('productPrice');
+    const orderNumberEl = document.getElementById('orderNumber');
+    
+    if (productNameEl) productNameEl.textContent = cardName || '虚拟机器人服务卡';
+    if (productPriceEl) productPriceEl.textContent = `¥${price || '0.00'}`;
+    if (orderNumberEl) orderNumberEl.textContent = currentOrderId;
+    
+    console.log('订单信息已设置');
     
     // 开始支付流程
     startPayment();
@@ -35,6 +44,7 @@ function initializePayment() {
 async function startPayment() {
     try {
         console.log('开始创建支付订单:', currentOrderId);
+        console.log('API URL:', config.getApiUrl('/api/payment/create'));
         
         // 创建支付订单
         const response = await fetch(config.getApiUrl('/api/payment/create'), {
@@ -46,6 +56,8 @@ async function startPayment() {
                 orderId: currentOrderId
             })
         });
+        
+        console.log('API响应状态:', response.status);
         
         if (!response.ok) {
             throw new Error(`创建支付订单失败: ${response.status}`);
@@ -69,21 +81,22 @@ async function startPayment() {
 
 // 显示二维码
 function displayQRCode(qrCode) {
-    console.log('开始显示二维码:', qrCode);
+    console.log('开始显示二维码:', qrCode ? '有数据' : '无数据');
     const qrLoading = document.getElementById('qrLoading');
     const qrImage = document.getElementById('qrCodeImage');
     
-    console.log('二维码元素:', qrImage);
-    console.log('加载元素:', qrLoading);
+    console.log('二维码元素存在:', !!qrImage);
+    console.log('加载元素存在:', !!qrLoading);
     
-    if (qrCode) {
-        console.log('隐藏加载动画，显示二维码');
+    if (qrCode && qrImage) {
+        console.log('设置二维码图片');
         qrLoading.style.display = 'none';
         qrImage.src = qrCode;
         qrImage.style.display = 'block';
-        console.log('二维码设置完成');
+        console.log('二维码显示完成');
     } else {
-        console.error('二维码数据为空');
+        console.error('二维码数据或元素缺失');
+        if (qrLoading) qrLoading.style.display = 'flex';
         showError('二维码生成失败');
     }
 }
@@ -167,15 +180,19 @@ function refreshPayment() {
     }
     
     // 重置状态
-    document.getElementById('statusPending').style.display = 'flex';
-    document.getElementById('statusSuccess').style.display = 'none';
-    document.getElementById('statusFailed').style.display = 'none';
+    const statusPending = document.getElementById('statusPending');
+    const statusSuccess = document.getElementById('statusSuccess');
+    const statusFailed = document.getElementById('statusFailed');
+    
+    if (statusPending) statusPending.style.display = 'flex';
+    if (statusSuccess) statusSuccess.style.display = 'none';
+    if (statusFailed) statusFailed.style.display = 'none';
     
     // 隐藏二维码，显示加载动画
     const qrLoading = document.getElementById('qrLoading');
     const qrImage = document.getElementById('qrCodeImage');
-    qrLoading.style.display = 'flex';
-    qrImage.style.display = 'none';
+    if (qrLoading) qrLoading.style.display = 'flex';
+    if (qrImage) qrImage.style.display = 'none';
     
     console.log('重新开始支付流程');
     // 重新开始支付流程
