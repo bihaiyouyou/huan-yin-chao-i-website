@@ -30,9 +30,21 @@ function initializePayment() {
     const productPriceEl = document.getElementById('productPrice');
     const orderNumberEl = document.getElementById('orderNumber');
     
+    console.log('订单信息元素检查:', {
+        productNameEl: !!productNameEl,
+        productPriceEl: !!productPriceEl,
+        orderNumberEl: !!orderNumberEl,
+        currentOrderId: currentOrderId
+    });
+    
     if (productNameEl) productNameEl.textContent = cardName || '虚拟机器人服务卡';
     if (productPriceEl) productPriceEl.textContent = `¥${price || '0.00'}`;
-    if (orderNumberEl) orderNumberEl.textContent = currentOrderId;
+    if (orderNumberEl) {
+        orderNumberEl.textContent = currentOrderId;
+        console.log('订单号已设置为:', currentOrderId);
+    } else {
+        console.error('找不到订单号元素');
+    }
     
     console.log('订单信息已设置');
     
@@ -172,17 +184,24 @@ function showPaymentTimeout() {
 
 // 刷新支付
 function refreshPayment() {
-    console.log('刷新支付被点击');
+    console.log('🔄 刷新支付被点击');
+    console.log('当前订单ID:', currentOrderId);
     
     if (paymentCheckInterval) {
         clearInterval(paymentCheckInterval);
-        console.log('清除支付状态检查定时器');
+        console.log('✅ 清除支付状态检查定时器');
     }
     
     // 重置状态
     const statusPending = document.getElementById('statusPending');
     const statusSuccess = document.getElementById('statusSuccess');
     const statusFailed = document.getElementById('statusFailed');
+    
+    console.log('状态元素检查:', {
+        statusPending: !!statusPending,
+        statusSuccess: !!statusSuccess,
+        statusFailed: !!statusFailed
+    });
     
     if (statusPending) statusPending.style.display = 'flex';
     if (statusSuccess) statusSuccess.style.display = 'none';
@@ -191,10 +210,16 @@ function refreshPayment() {
     // 隐藏二维码，显示加载动画
     const qrLoading = document.getElementById('qrLoading');
     const qrImage = document.getElementById('qrCodeImage');
+    
+    console.log('二维码元素检查:', {
+        qrLoading: !!qrLoading,
+        qrImage: !!qrImage
+    });
+    
     if (qrLoading) qrLoading.style.display = 'flex';
     if (qrImage) qrImage.style.display = 'none';
     
-    console.log('重新开始支付流程');
+    console.log('🔄 重新开始支付流程');
     // 重新开始支付流程
     startPayment();
 }
@@ -208,7 +233,9 @@ function goBack() {
     }
 }
 
-// 全局测试函数
+// 确保函数在全局作用域中可用
+window.refreshPayment = refreshPayment;
+window.goBack = goBack;
 window.testPayment = function() {
     console.log('=== 支付页面测试 ===');
     console.log('当前订单ID:', currentOrderId);
