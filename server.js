@@ -30,6 +30,11 @@ app.get('/files.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'files-admin.html'));
 });
 
+// 卡密管理页面路由
+app.get('/card-admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'card-admin.html'));
+});
+
 // 创建上传目录
 const uploadDir = path.join(__dirname, 'uploads');
 fs.ensureDirSync(uploadDir);
@@ -346,13 +351,13 @@ app.post('/api/orders', async (req, res) => {
         const orderNo = 'ORD' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
         
         // 创建订单
-        const result = await db.query(
+        const result = await db.run(
             'INSERT INTO orders (order_no, user_id, card_type_id, amount) VALUES (?, ?, ?, ?)',
             [orderNo, userId || 'anonymous', cardTypeId, cardType.price]
         );
         
         res.json({
-            orderId: result.insertId,
+            orderId: result.lastID,
             orderNo: orderNo,
             amount: cardType.price,
             cardType: cardType

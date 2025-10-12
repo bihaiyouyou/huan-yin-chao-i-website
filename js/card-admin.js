@@ -10,16 +10,48 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // 初始化管理页面
-function initializeAdmin() {
+async function initializeAdmin() {
     // 绑定事件
     document.getElementById('uploadBtn').addEventListener('click', uploadCardCodes);
     document.getElementById('filterType').addEventListener('change', handleFilterChange);
     document.getElementById('filterStatus').addEventListener('change', handleFilterChange);
     document.getElementById('refreshBtn').addEventListener('click', loadCardCodes);
     
+    // 加载卡类型选项
+    await loadCardTypes();
+    
     // 加载初始数据
     loadStatistics();
     loadCardCodes();
+}
+
+// 加载卡类型选项
+async function loadCardTypes() {
+    try {
+        const response = await fetch(config.getApiUrl('/api/card-types'));
+        if (!response.ok) {
+            throw new Error('获取卡类型失败');
+        }
+        
+        const cardTypes = await response.json();
+        const cardTypeSelect = document.getElementById('cardType');
+        
+        // 清空现有选项
+        cardTypeSelect.innerHTML = '<option value="">请选择卡类型</option>';
+        
+        // 添加卡类型选项
+        cardTypes.forEach(cardType => {
+            const option = document.createElement('option');
+            option.value = cardType.id;
+            option.textContent = cardType.name;
+            cardTypeSelect.appendChild(option);
+        });
+        
+        console.log('卡类型选项加载完成:', cardTypes);
+    } catch (error) {
+        console.error('加载卡类型失败:', error);
+        alert('加载卡类型失败，请刷新页面重试');
+    }
 }
 
 // 上传卡密

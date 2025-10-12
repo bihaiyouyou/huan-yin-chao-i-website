@@ -103,16 +103,32 @@ async function buyCard(cardTypeId, cardName, price) {
         // 生成用户ID（实际应用中应该从登录状态获取）
         const userId = generateUserId();
         
-        // 映射cardTypeId到数据库中的实际ID
-        const cardTypeMapping = {
-            1: 37, // 日卡
-            2: 38, // 月卡
-            3: 39, // 季卡
-            4: 40  // 年卡
+        // 获取实际的cardTypeId（通过名称匹配）
+        const cardTypeNameMapping = {
+            1: '日卡',
+            2: '月卡', 
+            3: '季卡',
+            4: '年卡'
         };
         
-        const actualCardTypeId = cardTypeMapping[cardTypeId] || cardTypeId;
-        console.log('映射后的cardTypeId:', actualCardTypeId);
+        const cardTypeName = cardTypeNameMapping[cardTypeId];
+        console.log('查找卡类型:', cardTypeName);
+        
+        // 先获取所有卡类型，找到匹配的ID
+        const cardTypesResponse = await fetch(config.getApiUrl('/api/card-types'));
+        if (!cardTypesResponse.ok) {
+            throw new Error('获取卡类型失败');
+        }
+        
+        const cardTypes = await cardTypesResponse.json();
+        const matchedCardType = cardTypes.find(ct => ct.name === cardTypeName);
+        
+        if (!matchedCardType) {
+            throw new Error(`找不到卡类型: ${cardTypeName}`);
+        }
+        
+        const actualCardTypeId = matchedCardType.id;
+        console.log('找到的cardTypeId:', actualCardTypeId);
         
         // 创建订单
         const orderResponse = await fetch(config.getApiUrl('/api/orders'), {
