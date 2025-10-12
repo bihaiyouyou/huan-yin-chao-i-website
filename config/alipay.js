@@ -1,6 +1,8 @@
 // 支付宝配置 - 简化版本（用于测试）
 console.log('📱 支付宝配置加载（测试模式）');
 
+const QRCode = require('qrcode');
+
 // 模拟支付宝配置
 const alipayConfig = {
     appId: 'test_app_id',
@@ -15,11 +17,19 @@ async function createOrder(orderData) {
     try {
         console.log('📱 模拟创建支付订单:', orderData);
         
-        // 模拟返回二维码数据（实际应该是支付宝返回的二维码）
-        const mockQrCode = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==`;
+        // 生成真实的二维码（包含支付信息）
+        const paymentUrl = `alipays://platformapi/startapp?appId=20000067&url=${encodeURIComponent('https://qr.alipay.com/bax' + orderData.out_trade_no)}`;
+        const qrCodeDataUrl = await QRCode.toDataURL(paymentUrl, {
+            width: 300,
+            margin: 2,
+            color: {
+                dark: '#000000',
+                light: '#FFFFFF'
+            }
+        });
         
         return {
-            qr_code: mockQrCode,
+            qr_code: qrCodeDataUrl,
             out_trade_no: orderData.out_trade_no
         };
     } catch (error) {
