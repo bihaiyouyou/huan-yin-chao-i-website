@@ -1,141 +1,106 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API连接测试</title>
+    <title>API测试</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a1a; color: white; }
-        .test-area { background: #2a2a2a; padding: 20px; border-radius: 8px; margin: 20px 0; }
-        button { background: #ff6b35; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
-        button:hover { background: #e55a2b; }
-        .log { background: #333; padding: 10px; border-radius: 4px; margin: 10px 0; font-family: monospace; white-space: pre-wrap; }
+        body { background: #1a1a1a; color: white; padding: 20px; font-family: Arial, sans-serif; }
+        .test-section { margin: 20px 0; padding: 15px; background: #2d2d2d; border-radius: 8px; }
+        button { padding: 10px 20px; margin: 5px; background: #ff6b35; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .result { margin: 10px 0; padding: 10px; background: #333; border-radius: 5px; }
         .success { color: #4CAF50; }
         .error { color: #f44336; }
+        .qr-image { width: 200px; height: 200px; border: 2px solid #ff6b35; border-radius: 8px; background: white; padding: 10px; margin: 10px auto; display: block; }
     </style>
 </head>
 <body>
-    <h1>API连接测试页面</h1>
+    <h1>🔧 API连接测试</h1>
     
-    <div class="test-area">
-        <h2>当前配置</h2>
-        <p><strong>API基础URL:</strong> <span id="apiBaseUrl"></span></p>
-        <p><strong>当前环境:</strong> <span id="currentEnv"></span></p>
+    <div class="test-section">
+        <h3>1. 基础API测试</h3>
+        <button onclick="testBasicAPI()">测试基础API</button>
+        <div id="basicResult" class="result"></div>
     </div>
     
-    <div class="test-area">
-        <h2>API测试</h2>
-        <button onclick="testApiConnection()">测试API连接</button>
-        <button onclick="testFileList()">测试文件列表</button>
-        <button onclick="testDownload()">测试下载</button>
-        <button onclick="clearLog()">清除日志</button>
+    <div class="test-section">
+        <h3>2. 支付API测试</h3>
+        <button onclick="testPaymentAPI()">测试支付API</button>
+        <div id="paymentResult" class="result"></div>
+        <img id="testQR" class="qr-image" style="display: none;" alt="测试二维码">
     </div>
     
-    <div class="test-area">
-        <h2>测试日志</h2>
-        <div id="log" class="log">等待测试...</div>
+    <div class="test-section">
+        <h3>3. 调试信息</h3>
+        <div id="debugInfo" class="result"></div>
     </div>
 
-    <script src="js/config.js"></script>
     <script>
-        // 显示当前配置
-        document.getElementById('apiBaseUrl').textContent = config.getApiBaseUrl();
-        document.getElementById('currentEnv').textContent = config.isLocalhost ? '本地开发环境' : '生产环境';
+        function testBasicAPI() {
+            const result = document.getElementById('basicResult');
+            result.innerHTML = '<div>正在测试基础API...</div>';
+            
+            fetch('http://localhost:3000/api/card-types')
+                .then(response => {
+                    console.log('基础API响应:', response);
+                    if (response.ok) {
+                        result.innerHTML = '<div class="success">✅ 基础API连接正常</div>';
+                    } else {
+                        result.innerHTML = '<div class="error">❌ 基础API连接失败: ' + response.status + '</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('基础API错误:', error);
+                    result.innerHTML = '<div class="error">❌ 基础API错误: ' + error.message + '</div>';
+                });
+        }
         
-        // 重写console.log来显示在页面上
-        const originalLog = console.log;
-        const logDiv = document.getElementById('log');
+        function testPaymentAPI() {
+            const result = document.getElementById('paymentResult');
+            const qrImage = document.getElementById('testQR');
+            
+            result.innerHTML = '<div>正在测试支付API...</div>';
+            
+            fetch('http://localhost:3000/api/payment/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderId: 37 })
+            })
+            .then(response => {
+                console.log('支付API响应:', response);
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('HTTP ' + response.status);
+                }
+            })
+            .then(data => {
+                console.log('支付API数据:', data);
+                result.innerHTML = '<div class="success">✅ 支付API正常</div><div>二维码长度: ' + data.qrCode.length + '</div>';
+                
+                qrImage.src = data.qrCode;
+                qrImage.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('支付API错误:', error);
+                result.innerHTML = '<div class="error">❌ 支付API错误: ' + error.message + '</div>';
+            });
+        }
         
-        function addLog(message, type = 'info') {
-            const timestamp = new Date().toLocaleTimeString();
-            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
-            logDiv.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
-            logDiv.scrollTop = logDiv.scrollHeight;
-        }
-
-        // 测试API连接
-        async function testApiConnection() {
-            addLog('开始测试API连接...');
-            try {
-                const apiUrl = config.getApiUrl('/api/files');
-                addLog(`请求URL: ${apiUrl}`);
-                
-                const response = await fetch(apiUrl);
-                addLog(`响应状态: ${response.status} ${response.statusText}`, response.ok ? 'success' : 'error');
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    addLog(`API连接成功！文件数量: ${data.length}`, 'success');
-                } else {
-                    addLog(`API连接失败: ${response.status}`, 'error');
-                }
-            } catch (error) {
-                addLog(`API连接错误: ${error.message}`, 'error');
-            }
-        }
-
-        // 测试文件列表
-        async function testFileList() {
-            addLog('开始测试文件列表...');
-            try {
-                const apiUrl = config.getApiUrl('/api/files');
-                const response = await fetch(apiUrl);
-                
-                if (response.ok) {
-                    const files = await response.json();
-                    addLog(`文件列表获取成功！`, 'success');
-                    addLog(`文件数量: ${files.length}`);
-                    files.forEach((file, index) => {
-                        addLog(`文件${index + 1}: ${file.originalName || file.name} (ID: ${file.id})`);
-                    });
-                } else {
-                    addLog(`文件列表获取失败: ${response.status}`, 'error');
-                }
-            } catch (error) {
-                addLog(`文件列表错误: ${error.message}`, 'error');
-            }
-        }
-
-        // 测试下载
-        async function testDownload() {
-            addLog('开始测试下载功能...');
-            try {
-                // 先获取文件列表
-                const filesUrl = config.getApiUrl('/api/files');
-                const filesResponse = await fetch(filesUrl);
-                
-                if (!filesResponse.ok) {
-                    addLog('无法获取文件列表', 'error');
-                    return;
-                }
-                
-                const files = await filesResponse.json();
-                if (files.length === 0) {
-                    addLog('没有文件可供下载', 'error');
-                    return;
-                }
-                
-                const firstFile = files[0];
-                const downloadUrl = config.getApiUrl(`/api/download/${firstFile.id}`);
-                addLog(`测试下载文件: ${firstFile.originalName || firstFile.name}`);
-                addLog(`下载URL: ${downloadUrl}`);
-                
-                const downloadResponse = await fetch(downloadUrl);
-                addLog(`下载响应: ${downloadResponse.status} ${downloadResponse.statusText}`, downloadResponse.ok ? 'success' : 'error');
-                
-                if (downloadResponse.ok) {
-                    addLog('下载功能正常！', 'success');
-                } else {
-                    addLog('下载功能异常', 'error');
-                }
-            } catch (error) {
-                addLog(`下载测试错误: ${error.message}`, 'error');
-            }
-        }
-
-        function clearLog() {
-            logDiv.innerHTML = '日志已清除\n';
-        }
+        // 页面加载时自动测试
+        document.addEventListener('DOMContentLoaded', function() {
+            const debugInfo = document.getElementById('debugInfo');
+            debugInfo.innerHTML = `
+                <div>当前URL: ${window.location.href}</div>
+                <div>当前时间: ${new Date().toLocaleString()}</div>
+                <div>User Agent: ${navigator.userAgent}</div>
+            `;
+            
+            // 自动测试基础API
+            setTimeout(() => {
+                testBasicAPI();
+            }, 1000);
+        });
     </script>
 </body>
 </html>
