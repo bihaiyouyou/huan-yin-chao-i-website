@@ -23,6 +23,7 @@ function initializePayment() {
     // 显示订单信息
     document.getElementById('productName').textContent = cardName || '虚拟机器人服务卡';
     document.getElementById('productPrice').textContent = `¥${price || '0.00'}`;
+    document.getElementById('orderNumber').textContent = currentOrderId;
     
     // 开始支付流程
     startPayment();
@@ -50,6 +51,7 @@ async function startPayment() {
         
         const paymentData = await response.json();
         console.log('支付订单创建成功:', paymentData);
+        console.log('二维码数据:', paymentData.qrCode);
         
         // 显示二维码
         displayQRCode(paymentData.qrCode);
@@ -65,14 +67,21 @@ async function startPayment() {
 
 // 显示二维码
 function displayQRCode(qrCode) {
+    console.log('开始显示二维码:', qrCode);
     const qrLoading = document.getElementById('qrLoading');
     const qrImage = document.getElementById('qrCodeImage');
     
+    console.log('二维码元素:', qrImage);
+    console.log('加载元素:', qrLoading);
+    
     if (qrCode) {
+        console.log('隐藏加载动画，显示二维码');
         qrLoading.style.display = 'none';
         qrImage.src = qrCode;
         qrImage.style.display = 'block';
+        console.log('二维码设置完成');
     } else {
+        console.error('二维码数据为空');
         showError('二维码生成失败');
     }
 }
@@ -148,8 +157,11 @@ function showPaymentTimeout() {
 
 // 刷新支付
 function refreshPayment() {
+    console.log('刷新支付被点击');
+    
     if (paymentCheckInterval) {
         clearInterval(paymentCheckInterval);
+        console.log('清除支付状态检查定时器');
     }
     
     // 重置状态
@@ -157,6 +169,13 @@ function refreshPayment() {
     document.getElementById('statusSuccess').style.display = 'none';
     document.getElementById('statusFailed').style.display = 'none';
     
+    // 隐藏二维码，显示加载动画
+    const qrLoading = document.getElementById('qrLoading');
+    const qrImage = document.getElementById('qrCodeImage');
+    qrLoading.style.display = 'flex';
+    qrImage.style.display = 'none';
+    
+    console.log('重新开始支付流程');
     // 重新开始支付流程
     startPayment();
 }
