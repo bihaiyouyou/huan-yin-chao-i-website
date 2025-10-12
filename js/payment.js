@@ -30,22 +30,16 @@ function initializePayment() {
         return;
     }
     
-    // 显示订单信息 - 使用延迟确保DOM完全加载
-    setTimeout(() => {
-        const productNameEl = document.getElementById('productName');
-        const productPriceEl = document.getElementById('productPrice');
-        const orderNumberEl = document.getElementById('orderNumber');
-        
-        if (productNameEl) productNameEl.textContent = cardName || '虚拟机器人服务卡';
-        if (productPriceEl) productPriceEl.textContent = `¥${price || '0.00'}`;
-        if (orderNumberEl) orderNumberEl.textContent = currentOrderId;
-        
-        console.log('订单信息已设置:', {
-            订单号: currentOrderId,
-            商品名: cardName,
-            价格: price
-        });
-    }, 100);
+    // 显示订单信息
+    const productNameEl = document.getElementById('productName');
+    const productPriceEl = document.getElementById('productPrice');
+    const orderNumberEl = document.getElementById('orderNumber');
+    
+    if (productNameEl) productNameEl.textContent = cardName || '虚拟机器人服务卡';
+    if (productPriceEl) productPriceEl.textContent = `¥${price || '0.00'}`;
+    if (orderNumberEl) orderNumberEl.textContent = currentOrderId;
+    
+    console.log('订单信息已设置');
     
     // 开始支付流程
     startPayment();
