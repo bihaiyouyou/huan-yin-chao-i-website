@@ -178,6 +178,21 @@
     border-radius: 8px;
 }
 
+/* 支付页面二维码特殊样式 */
+#qrCodeImage {
+    width: 250px !important;
+    height: 250px !important;
+    max-width: none !important;
+    max-height: none !important;
+    border: 2px solid #ff6b35 !important;
+    border-radius: 8px;
+    background: white;
+    padding: 15px;
+    margin: 0 auto;
+    display: block;
+    object-fit: contain;
+}
+
 .qr-instructions {
     text-align: left;
     color: #333;
@@ -357,15 +372,3 @@
     text-align: center;
 }
 
-/* 二维码样式 */
-#qrCodeImage {
-    width: 250px;
-    height: 250px;
-    border: 2px solid #ff6b35;
-    border-radius: 8px;
-    background: white;
-    padding: 15px;
-    margin: 0 auto;
-    display: block;
-    object-fit: contain;
-}
