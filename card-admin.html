@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡密管理 - 幻银超i</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/card-admin.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="webNavTable">
+        <div id="webNav" class="webNav">
+            <div class="navV2">
+                <div class="navCenterContent">
+                    <div class="itemContainer">
+                        <div class="item">
+                            <a href="index.html">首页</a>
+                        </div>
+                        <div class="itemSep"><span>|</span></div>
+                        <div class="item">
+                            <a href="business.html">公司业务</a>
+                        </div>
+                        <div class="itemSep"><span>|</span></div>
+                        <div class="item">
+                            <a href="news.html">新闻资讯</a>
+                        </div>
+                        <div class="itemSep"><span>|</span></div>
+                        <div class="item">
+                            <a href="technology.html">核心技术</a>
+                        </div>
+                        <div class="itemSep"><span>|</span></div>
+                        <div class="item">
+                            <a href="about.html">关于我们</a>
+                        </div>
+                        <div class="itemSep"><span>|</span></div>
+                        <div class="item">
+                            <a href="files.html">软件下载</a>
+                        </div>
+                        <div class="item">
+                            <a href="card-shop.html">服务卡</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 卡密管理页面主要内容 -->
+    <div class="fullmeasure-section card-admin-section">
+        <div class="fullmeasure-content">
+            <div class="card-admin-title">
+                <div class="main">
+                    <span class="white">卡密</span><span class="highlight">管理</span>
+                </div>
+                <div class="sub">Card Management System</div>
+            </div>
+
+            <div class="card-admin-content">
+                <!-- 上传卡密区域 -->
+                <div class="upload-section">
+                    <h3>批量上传卡密</h3>
+                    <div class="upload-area">
+                        <div class="upload-form">
+                            <div class="form-group">
+                                <label for="cardType">卡类型：</label>
+                                <select id="cardType" required>
+                                    <option value="">请选择卡类型</option>
+                                    <option value="1">日卡</option>
+                                    <option value="2">月卡</option>
+                                    <option value="3">季卡</option>
+                                    <option value="4">年卡</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="cardCodes">卡密列表：</label>
+                                <textarea id="cardCodes" placeholder="请输入卡密，每行一个" rows="10"></textarea>
+                            </div>
+                            <button id="uploadBtn" class="upload-btn">上传卡密</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 卡密统计 -->
+                <div class="stats-section">
+                    <h3>卡密统计</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">日卡</div>
+                            <div class="stat-value" id="dailyCount">0</div>
+                            <div class="stat-desc">未使用</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">月卡</div>
+                            <div class="stat-value" id="monthlyCount">0</div>
+                            <div class="stat-desc">未使用</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">季卡</div>
+                            <div class="stat-value" id="quarterlyCount">0</div>
+                            <div class="stat-desc">未使用</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">年卡</div>
+                            <div class="stat-value" id="yearlyCount">0</div>
+                            <div class="stat-desc">未使用</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 卡密列表 -->
+                <div class="codes-section">
+                    <h3>卡密列表</h3>
+                    <div class="filter-bar">
+                        <select id="filterType">
+                            <option value="">所有类型</option>
+                            <option value="1">日卡</option>
+                            <option value="2">月卡</option>
+                            <option value="3">季卡</option>
+                            <option value="4">年卡</option>
+                        </select>
+                        <select id="filterStatus">
+                            <option value="">所有状态</option>
+                            <option value="unused">未使用</option>
+                            <option value="used">已使用</option>
+                            <option value="expired">已过期</option>
+                        </select>
+                        <button id="refreshBtn" class="refresh-btn">刷新</button>
+                    </div>
+                    <div class="codes-list" id="codesList">
+                        <!-- 卡密列表将在这里显示 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="webFooter">
+        <div class="footer-content">
+            <div class="footer-nav-item footer-business">
+                <h4><a href="business.html">公司业务</a></h4>
+                <div class="sub-items">
+                    <div>产品中心</div>
+                    <div>成功案例</div>
+                </div>
+            </div>
+
+            <div class="footer-nav-item footer-news">
+                <h4><a href="news.html">新闻资讯</a></h4>
+                <div class="sub-items">
+                    <div>公司新闻</div>
+                    <div>行业资讯</div>
+                </div>
+            </div>
+
+            <div class="footer-nav-item footer-tech">
+                <h4><a href="technology.html">核心技术</a></h4>
+                <div class="sub-items">
+                    <div>核心技术</div>
+                </div>
+            </div>
+
+            <div class="footer-nav-item footer-about">
+                <h4><a href="about.html">关于我们</a></h4>
+                <div class="sub-items">
+                    <div>公司简介</div>
+                    <div>发展历程</div>
+                </div>
+            </div>
+
+            <div class="footer-nav-item footer-contact-title">
+                <h4><a href="index.html">联系我们</a></h4>
+            </div>
+
+            <div class="footer-contact-info footer-address">
+                浙江省杭州市滨江区
+            </div>
+
+            <div class="footer-contact-info footer-phone">
+                Email:1930360522@qq.com
+            </div>
+
+            <div class="footer-divider">
+                <img src="images/11.png" alt="" class="section-image">
+            </div>
+
+            <div class="footer-info">
+                ©2025 - 幻银超i——桌面虚拟机器人 版权所有
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/card-admin.js"></script>
+</body>
+</html>

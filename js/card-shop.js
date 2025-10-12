@@ -124,6 +124,7 @@ async function buyCard(cardTypeId, cardName, price) {
         
         // 跳转到支付页面
         const paymentUrl = `payment.html?orderId=${order.orderId}&cardName=${encodeURIComponent(cardName)}&price=${price}`;
+        console.log('跳转到支付页面:', paymentUrl);
         window.location.href = paymentUrl;
         
     } catch (error) {

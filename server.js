@@ -618,6 +618,132 @@ async function startServer() {
     }
 }
 
+// ==================== 管理员API ====================
+
+// 获取统计信息
+app.get('/api/admin/statistics', async (req, res) => {
+    try {
+        const stats = await db.query(`
+            SELECT 
+                ct.id,
+                ct.name,
+                COUNT(cc.id) as total,
+                COUNT(CASE WHEN cc.status = 'unused' THEN 1 END) as unused
+            FROM card_types ct
+            LEFT JOIN card_codes cc ON ct.id = cc.card_type_id
+            GROUP BY ct.id, ct.name
+        `);
+        
+        const result = {};
+        stats.forEach(stat => {
+            if (stat.name === '日卡') result.daily = stat.unused;
+            else if (stat.name === '月卡') result.monthly = stat.unused;
+            else if (stat.name === '季卡') result.quarterly = stat.unused;
+            else if (stat.name === '年卡') result.yearly = stat.unused;
+        });
+        
+        res.json(result);
+    } catch (error) {
+        console.error('获取统计信息失败:', error);
+        res.status(500).json({ error: '获取统计信息失败' });
+    }
+});
+
+// 获取卡密列表
+app.get('/api/admin/card-codes', async (req, res) => {
+    try {
+        const { type, status } = req.query;
+        
+        let sql = `
+            SELECT cc.*, ct.name as card_type_name
+            FROM card_codes cc
+            JOIN card_types ct ON cc.card_type_id = ct.id
+            WHERE 1=1
+        `;
+        const params = [];
+        
+        if (type) {
+            sql += ' AND cc.card_type_id = ?';
+            params.push(type);
+        }
+        
+        if (status) {
+            sql += ' AND cc.status = ?';
+            params.push(status);
+        }
+        
+        sql += ' ORDER BY cc.created_at DESC LIMIT 100';
+        
+        const codes = await db.query(sql, params);
+        res.json({ codes });
+    } catch (error) {
+        console.error('获取卡密列表失败:', error);
+        res.status(500).json({ error: '获取卡密列表失败' });
+    }
+});
+
+// 批量上传卡密
+app.post('/api/admin/card-codes', async (req, res) => {
+    try {
+        const { cardTypeId, cardCodes } = req.body;
+        
+        if (!cardTypeId || !cardCodes || !Array.isArray(cardCodes)) {
+            return res.status(400).json({ error: '参数错误' });
+        }
+        
+        // 验证卡类型是否存在
+        const cardTypes = await db.query('SELECT * FROM card_types WHERE id = ?', [cardTypeId]);
+        if (cardTypes.length === 0) {
+            return res.status(400).json({ error: '卡类型不存在' });
+        }
+        
+        // 插入卡密
+        const insertStmt = db.prepare(`
+            INSERT INTO card_codes (card_type_id, code, status) 
+            VALUES (?, ?, 'unused')
+        `);
+        
+        let successCount = 0;
+        for (const code of cardCodes) {
+            if (code && code.trim()) {
+                try {
+                    await db.run(insertStmt, [cardTypeId, code.trim()]);
+                    successCount++;
+                } catch (err) {
+                    console.error('插入卡密失败:', code, err);
+                }
+            }
+        }
+        
+        res.json({ 
+            success: true, 
+            count: successCount,
+            total: cardCodes.length 
+        });
+    } catch (error) {
+        console.error('上传卡密失败:', error);
+        res.status(500).json({ error: '上传卡密失败' });
+    }
+});
+
+// 删除卡密
+app.delete('/api/admin/card-codes/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const result = await db.run('DELETE FROM card_codes WHERE id = ? AND status = "unused"', [id]);
+        
+        if (result.changes === 0) {
+            return res.status(404).json({ error: '卡密不存在或已被使用' });
+        }
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('删除卡密失败:', error);
+        res.status(500).json({ error: '删除卡密失败' });
+    }
+});
+
 // 启动服务器
 startServer();
 

@@ -9,33 +9,42 @@
 </head>
 <body>
     <!-- 导航栏 -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <a href="index.html">幻银超i</a>
-            </div>
-            <div class="nav-menu">
-                <div class="item">
-                    <a href="index.html">首页</a>
-                </div>
-                <div class="item">
-                    <a href="business.html">公司业务</a>
-                </div>
-                <div class="item">
-                    <a href="news.html">新闻资讯</a>
-                </div>
-                <div class="item">
-                    <a href="about.html">关于我们</a>
-                </div>
-                <div class="item">
-                    <a href="files.html">软件下载</a>
-                </div>
-                <div class="item">
-                    <a href="card-shop.html">服务卡</a>
+    <div class="webNavTable">
+        <div id="webNav" class="webNav">
+            <div class="navV2">
+                <div class="navCenterContent">
+                    <div class="itemContainer">
+                        <div class="item">
+                            <a href="index.html">首页</a>
+                        </div>
+                        <div class="itemSep"><span>|</span></div>
+                        <div class="item">
+                            <a href="business.html">公司业务</a>
+                        </div>
+                        <div class="itemSep"><span>|</span></div>
+                        <div class="item">
+                            <a href="news.html">新闻资讯</a>
+                        </div>
+                        <div class="itemSep"><span>|</span></div>
+                        <div class="item">
+                            <a href="technology.html">核心技术</a>
+                        </div>
+                        <div class="itemSep"><span>|</span></div>
+                        <div class="item">
+                            <a href="about.html">关于我们</a>
+                        </div>
+                        <div class="itemSep"><span>|</span></div>
+                        <div class="item">
+                            <a href="files.html">软件下载</a>
+                        </div>
+                        <div class="item">
+                            <a href="card-shop.html">服务卡</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
 
     <!-- 支付页面主要内容 -->
     <div class="fullmeasure-section payment-section">
@@ -133,51 +142,60 @@
     </div>
 
     <!-- 页脚 -->
-    <footer class="footer">
+    <div class="webFooter">
         <div class="footer-content">
-            <div class="footer-logo">
-                <h3>幻银超i</h3>
-                <p>桌面虚拟机器人</p>
-            </div>
-            <div class="footer-nav">
-                <div class="footer-nav-item">
-                    <h4>公司业务</h4>
-                    <ul>
-                        <li><a href="business.html">产品中心</a></li>
-                        <li><a href="business.html">成功案例</a></li>
-                    </ul>
-                </div>
-                <div class="footer-nav-item">
-                    <h4>新闻资讯</h4>
-                    <ul>
-                        <li><a href="news.html">公司新闻</a></li>
-                        <li><a href="news.html">行业资讯</a></li>
-                    </ul>
-                </div>
-                <div class="footer-nav-item">
-                    <h4>核心技术</h4>
-                    <ul>
-                        <li><a href="index.html">核心技术</a></li>
-                    </ul>
-                </div>
-                <div class="footer-nav-item">
-                    <h4>关于我们</h4>
-                    <ul>
-                        <li><a href="about.html">公司简介</a></li>
-                        <li><a href="about.html">发展历程</a></li>
-                    </ul>
+            <div class="footer-nav-item footer-business">
+                <h4><a href="business.html">公司业务</a></h4>
+                <div class="sub-items">
+                    <div>产品中心</div>
+                    <div>成功案例</div>
                 </div>
             </div>
-            <div class="footer-contact">
-                <div class="footer-contact-title">联系我们</div>
-                <div class="footer-address">浙江省杭州市滨江区</div>
-                <div class="footer-phone">Email: 1930360522@qq.com</div>
+
+            <div class="footer-nav-item footer-news">
+                <h4><a href="news.html">新闻资讯</a></h4>
+                <div class="sub-items">
+                    <div>公司新闻</div>
+                    <div>行业资讯</div>
+                </div>
+            </div>
+
+            <div class="footer-nav-item footer-tech">
+                <h4><a href="technology.html">核心技术</a></h4>
+                <div class="sub-items">
+                    <div>核心技术</div>
+                </div>
+            </div>
+
+            <div class="footer-nav-item footer-about">
+                <h4><a href="about.html">关于我们</a></h4>
+                <div class="sub-items">
+                    <div>公司简介</div>
+                    <div>发展历程</div>
+                </div>
+            </div>
+
+            <div class="footer-nav-item footer-contact-title">
+                <h4><a href="index.html">联系我们</a></h4>
+            </div>
+
+            <div class="footer-contact-info footer-address">
+                浙江省杭州市滨江区
+            </div>
+
+            <div class="footer-contact-info footer-phone">
+                Email:1930360522@qq.com
+            </div>
+
+            <div class="footer-divider">
+                <img src="images/11.png" alt="" class="section-image">
+            </div>
+
+            <div class="footer-info">
+                ©2025 - 幻银超i——桌面虚拟机器人 版权所有
             </div>
         </div>
-        <div class="footer-info">
-            <p>©2025 - 幻银超i——桌面虚拟机器人 版权所有</p>
-        </div>
-    </footer>
+    </div>
 
     <script src="js/config.js"></script>
     <script src="js/main.js"></script>

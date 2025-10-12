@@ -116,8 +116,11 @@ function insertInitialData() {
             ['年卡', 365, 300.00, '全功能+VIP支持，有效期365天']
         ];
 
+        // 先清空现有数据，避免重复
+        await db.run('DELETE FROM card_types');
+        
         const insertCardTypes = db.prepare(`
-            INSERT OR IGNORE INTO card_types (name, duration_days, price, description) 
+            INSERT INTO card_types (name, duration_days, price, description) 
             VALUES (?, ?, ?, ?)
         `);
 
