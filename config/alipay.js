@@ -4,7 +4,7 @@ console.log('📱 支付宝配置加载');
 const QRCode = require('qrcode');
 const fs = require('fs');
 const path = require('path');
-const AlipaySdk = require('alipay-sdk').default;
+const AlipaySdk = require('alipay-sdk');
 
 // 加载环境变量配置
 let alipayConfig = {
@@ -86,6 +86,12 @@ async function createOrder(orderData) {
         console.log('📱 创建支付订单:', orderData);
 
         // 检查是否使用真实支付
+        console.log('🔧 支付模式检查:', {
+            alipaySdk: !!alipaySdk,
+            FORCE_TEST_MODE: FORCE_TEST_MODE,
+            appId: alipayConfig.appId
+        });
+        
         if (alipaySdk && !FORCE_TEST_MODE) {
             // 真实支付：调用支付宝API创建订单
             console.log('💰 使用真实支付宝API创建订单');
@@ -111,7 +117,16 @@ async function createOrder(orderData) {
             // 模拟支付：生成测试二维码
             console.log('🧪 使用模拟支付模式');
             
-            const paymentUrl = `alipays://platformapi/startapp?appId=20000067&url=${encodeURIComponent('https://www.alipay.com')}`;
+            // 生成一个包含支付信息的测试二维码
+            // 注意：这是测试模式，扫码后不会进行真实支付
+            const testPaymentData = {
+                orderId: orderData.out_trade_no,
+                amount: orderData.total_amount,
+                subject: orderData.subject,
+                timestamp: Date.now()
+            };
+            
+            const paymentUrl = `https://www.alipay.com?test=true&orderId=${orderData.out_trade_no}&amount=${orderData.total_amount}`;
             const qrCodeDataUrl = await QRCode.toDataURL(paymentUrl, {
                 width: 300,
                 margin: 2,
@@ -121,6 +136,7 @@ async function createOrder(orderData) {
                 }
             });
 
+            console.log('🧪 生成测试二维码:', paymentUrl);
             return {
                 qr_code: qrCodeDataUrl,
                 out_trade_no: orderData.out_trade_no
