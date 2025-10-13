@@ -18,6 +18,7 @@ async function createOrder(orderData) {
         console.log('📱 模拟创建支付订单:', orderData);
         
         // 生成测试用的二维码（包含支付信息）
+        // 注意：这是测试模式，扫码后不会进行真实支付
         const paymentUrl = `alipays://platformapi/startapp?appId=20000067&url=${encodeURIComponent('https://www.alipay.com')}`;
         const qrCodeDataUrl = await QRCode.toDataURL(paymentUrl, {
             width: 300,
@@ -43,8 +44,20 @@ async function queryOrder(outTradeNo) {
     try {
         console.log('🔍 模拟查询订单状态:', outTradeNo);
         
-        // 模拟返回等待支付状态
-        // 在实际环境中，这里应该调用支付宝API查询真实状态
+        // 模拟支付逻辑：30秒后自动支付成功
+        const orderTime = new Date().getTime();
+        const currentTime = new Date().getTime();
+        const timeDiff = currentTime - orderTime;
+        
+        // 如果超过30秒，模拟支付成功
+        if (timeDiff > 30000) {
+            return {
+                trade_status: 'TRADE_SUCCESS',
+                trade_no: 'TEST_' + outTradeNo + '_' + Date.now()
+            };
+        }
+        
+        // 否则返回等待支付状态
         return {
             trade_status: 'WAIT_BUYER_PAY',
             trade_no: null
