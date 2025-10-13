@@ -98,22 +98,14 @@ async function queryOrder(outTradeNo) {
                 trade_no: null
             };
         } else {
-            // 模拟支付：基于订单号模式判断
-            console.log('🧪 使用模拟支付模式');
+            // 模拟支付：直接返回支付成功
+            console.log('🧪 使用模拟支付模式 - 直接返回支付成功');
             
-            if (outTradeNo && outTradeNo.includes('ORD')) {
-                // 模拟支付成功
-                console.log('✅ 模拟支付成功');
-                return {
-                    trade_status: 'TRADE_SUCCESS',
-                    trade_no: 'TEST_' + outTradeNo + '_' + Date.now()
-                };
-            }
-            
-            // 返回等待支付状态
+            // 模拟支付成功
+            console.log('✅ 模拟支付成功');
             return {
-                trade_status: 'WAIT_BUYER_PAY',
-                trade_no: null
+                trade_status: 'TRADE_SUCCESS',
+                trade_no: 'TEST_' + outTradeNo + '_' + Date.now()
             };
         }
     } catch (error) {
