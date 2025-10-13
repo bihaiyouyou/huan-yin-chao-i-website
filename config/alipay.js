@@ -101,10 +101,13 @@ async function queryOrder(outTradeNo) {
             // 模拟支付：模拟真实的扫码支付过程
             console.log('🧪 使用模拟支付模式');
             
-            // 模拟扫码支付：检查是否已经"扫码"
-            // 这里可以通过检查订单创建时间来判断是否扫码
-            const orderTime = new Date().getTime();
+            // 模拟扫码支付：基于订单号中的时间戳判断
+            // 订单号格式：ORD + 时间戳 + 随机字符
+            const orderTimestamp = outTradeNo.replace('ORD', '').substring(0, 13);
+            const orderTime = parseInt(orderTimestamp);
             const currentTime = new Date().getTime();
+            
+            console.log('订单时间戳:', orderTime, '当前时间:', currentTime, '时间差:', currentTime - orderTime);
             
             // 模拟：如果超过10秒，认为用户已经扫码并支付成功
             if (currentTime - orderTime > 10000) {
@@ -116,6 +119,7 @@ async function queryOrder(outTradeNo) {
             }
             
             // 否则返回等待支付状态
+            console.log('⏳ 等待扫码支付...');
             return {
                 trade_status: 'WAIT_BUYER_PAY',
                 trade_no: null
