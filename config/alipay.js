@@ -80,32 +80,42 @@ async function createOrder(orderData) {
     }
 }
 
-// 查询订单状态（模拟版本）
+// 查询订单状态（支持真实和模拟支付）
 async function queryOrder(outTradeNo) {
     try {
-        console.log('🔍 模拟查询订单状态:', outTradeNo);
+        console.log('🔍 查询订单状态:', outTradeNo);
         
-        // 模拟支付逻辑：等待30秒后自动支付成功
-        // 这里使用一个简单的逻辑：如果订单号包含特定字符，就模拟支付成功
-        if (outTradeNo && outTradeNo.length > 10) {
-            // 模拟30秒后支付成功
-            const orderCreatedTime = parseInt(outTradeNo.slice(-10)) || Date.now();
-            const currentTime = Date.now();
-            const timeDiff = currentTime - orderCreatedTime;
+        // 检查是否使用真实配置
+        const isRealConfig = alipayConfig.appId !== 'test_app_id';
+        
+        if (isRealConfig) {
+            // 真实支付：调用支付宝API查询订单状态
+            console.log('📱 使用真实支付宝API查询订单状态');
+            // 这里应该调用真实的支付宝API
+            // 暂时返回等待状态，需要实现真实的API调用
+            return {
+                trade_status: 'WAIT_BUYER_PAY',
+                trade_no: null
+            };
+        } else {
+            // 模拟支付：基于订单号模式判断
+            console.log('🧪 使用模拟支付模式');
             
-            if (timeDiff > 30000) { // 30秒后
+            if (outTradeNo && outTradeNo.includes('ORD')) {
+                // 模拟支付成功
+                console.log('✅ 模拟支付成功');
                 return {
                     trade_status: 'TRADE_SUCCESS',
                     trade_no: 'TEST_' + outTradeNo + '_' + Date.now()
                 };
             }
+            
+            // 返回等待支付状态
+            return {
+                trade_status: 'WAIT_BUYER_PAY',
+                trade_no: null
+            };
         }
-        
-        // 否则返回等待支付状态
-        return {
-            trade_status: 'WAIT_BUYER_PAY',
-            trade_no: null
-        };
     } catch (error) {
         console.error('查询订单状态失败:', error);
         throw error;
