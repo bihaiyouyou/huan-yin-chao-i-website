@@ -31,6 +31,9 @@ Thumbs.db
 .env.test.local
 .env.production.local
 
+# 支付宝配置文件（包含敏感信息）
+config/alipay.env
+
 # 系统文件
 .DS_Store
 .DS_Store?

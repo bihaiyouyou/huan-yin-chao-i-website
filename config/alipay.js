@@ -1,16 +1,57 @@
-// 支付宝配置 - 简化版本（用于测试）
-console.log('📱 支付宝配置加载（测试模式）');
+// 支付宝配置 - 支持环境变量
+console.log('📱 支付宝配置加载');
 
 const QRCode = require('qrcode');
+const fs = require('fs');
+const path = require('path');
 
-// 模拟支付宝配置
-const alipayConfig = {
+// 加载环境变量配置
+let alipayConfig = {
     appId: 'test_app_id',
     privateKey: 'test_private_key',
     alipayPublicKey: 'test_public_key',
     gateway: 'https://openapi.alipaydev.com/gateway.do',
     notifyUrl: 'http://localhost:3000/api/payment/callback'
 };
+
+// 尝试加载真实配置
+try {
+    const envPath = path.join(__dirname, 'alipay.env');
+    if (fs.existsSync(envPath)) {
+        const envContent = fs.readFileSync(envPath, 'utf8');
+        const envLines = envContent.split('\n');
+        
+        for (const line of envLines) {
+            if (line.trim() && !line.startsWith('#')) {
+                const [key, value] = line.split('=');
+                if (key && value) {
+                    switch (key.trim()) {
+                        case 'ALIPAY_APP_ID':
+                            alipayConfig.appId = value.trim();
+                            break;
+                        case 'ALIPAY_PRIVATE_KEY':
+                            alipayConfig.privateKey = value.trim();
+                            break;
+                        case 'ALIPAY_PUBLIC_KEY':
+                            alipayConfig.alipayPublicKey = value.trim();
+                            break;
+                        case 'ALIPAY_GATEWAY':
+                            alipayConfig.gateway = value.trim();
+                            break;
+                        case 'ALIPAY_NOTIFY_URL':
+                            alipayConfig.notifyUrl = value.trim();
+                            break;
+                    }
+                }
+            }
+        }
+        console.log('✅ 已加载支付宝配置');
+    } else {
+        console.log('⚠️ 使用测试模式（未找到 alipay.env 文件）');
+    }
+} catch (error) {
+    console.log('⚠️ 配置加载失败，使用测试模式:', error.message);
+}
 
 // 创建支付订单（模拟版本）
 async function createOrder(orderData) {
@@ -44,17 +85,20 @@ async function queryOrder(outTradeNo) {
     try {
         console.log('🔍 模拟查询订单状态:', outTradeNo);
         
-        // 模拟支付逻辑：30秒后自动支付成功
-        const orderTime = new Date().getTime();
-        const currentTime = new Date().getTime();
-        const timeDiff = currentTime - orderTime;
-        
-        // 如果超过30秒，模拟支付成功
-        if (timeDiff > 30000) {
-            return {
-                trade_status: 'TRADE_SUCCESS',
-                trade_no: 'TEST_' + outTradeNo + '_' + Date.now()
-            };
+        // 模拟支付逻辑：等待30秒后自动支付成功
+        // 这里使用一个简单的逻辑：如果订单号包含特定字符，就模拟支付成功
+        if (outTradeNo && outTradeNo.length > 10) {
+            // 模拟30秒后支付成功
+            const orderCreatedTime = parseInt(outTradeNo.slice(-10)) || Date.now();
+            const currentTime = Date.now();
+            const timeDiff = currentTime - orderCreatedTime;
+            
+            if (timeDiff > 30000) { // 30秒后
+                return {
+                    trade_status: 'TRADE_SUCCESS',
+                    trade_no: 'TEST_' + outTradeNo + '_' + Date.now()
+                };
+            }
         }
         
         // 否则返回等待支付状态
