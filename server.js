@@ -437,7 +437,7 @@ app.get('/api/payment/status/:orderId', async (req, res) => {
         if (alipayStatus.trade_status === 'TRADE_SUCCESS') {
             // 更新订单状态
             await db.query(
-                'UPDATE orders SET status = "paid", alipay_trade_no = ?, paid_at = NOW() WHERE id = ?',
+                'UPDATE orders SET status = "paid", alipay_trade_no = ?, paid_at = datetime("now") WHERE id = ?',
                 [alipayStatus.trade_no, orderId]
             );
             
@@ -468,7 +468,7 @@ app.post('/api/payment/callback', async (req, res) => {
         if (trade_status === 'TRADE_SUCCESS') {
             // 更新订单状态
             await db.query(
-                'UPDATE orders SET status = "paid", alipay_trade_no = ?, paid_at = NOW() WHERE order_no = ?',
+                'UPDATE orders SET status = "paid", alipay_trade_no = ?, paid_at = datetime("now") WHERE order_no = ?',
                 [trade_no, out_trade_no]
             );
             
@@ -572,7 +572,7 @@ async function issueCardCode(orderNo) {
         expiresAt.setDate(expiresAt.getDate() + order.duration_days);
         
         await db.query(
-            'UPDATE card_codes SET status = "used", used_by = ?, used_at = NOW(), expires_at = ? WHERE id = ?',
+            'UPDATE card_codes SET status = "used", used_by = ?, used_at = datetime("now"), expires_at = ? WHERE id = ?',
             [order.user_id, expiresAt, cardCode.id]
         );
         
