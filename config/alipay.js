@@ -98,14 +98,27 @@ async function queryOrder(outTradeNo) {
                 trade_no: null
             };
         } else {
-            // 模拟支付：直接返回支付成功
-            console.log('🧪 使用模拟支付模式 - 直接返回支付成功');
+            // 模拟支付：模拟真实的扫码支付过程
+            console.log('🧪 使用模拟支付模式');
             
-            // 模拟支付成功
-            console.log('✅ 模拟支付成功');
+            // 模拟扫码支付：检查是否已经"扫码"
+            // 这里可以通过检查订单创建时间来判断是否扫码
+            const orderTime = new Date().getTime();
+            const currentTime = new Date().getTime();
+            
+            // 模拟：如果超过10秒，认为用户已经扫码并支付成功
+            if (currentTime - orderTime > 10000) {
+                console.log('✅ 模拟扫码支付成功');
+                return {
+                    trade_status: 'TRADE_SUCCESS',
+                    trade_no: 'TEST_' + outTradeNo + '_' + Date.now()
+                };
+            }
+            
+            // 否则返回等待支付状态
             return {
-                trade_status: 'TRADE_SUCCESS',
-                trade_no: 'TEST_' + outTradeNo + '_' + Date.now()
+                trade_status: 'WAIT_BUYER_PAY',
+                trade_no: null
             };
         }
     } catch (error) {
