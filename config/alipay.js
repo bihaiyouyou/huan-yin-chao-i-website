@@ -17,8 +17,8 @@ async function createOrder(orderData) {
     try {
         console.log('📱 模拟创建支付订单:', orderData);
         
-        // 生成真实的二维码（包含支付信息）
-        const paymentUrl = `alipays://platformapi/startapp?appId=20000067&url=${encodeURIComponent('https://qr.alipay.com/bax' + orderData.out_trade_no)}`;
+        // 生成测试用的二维码（包含支付信息）
+        const paymentUrl = `alipays://platformapi/startapp?appId=20000067&url=${encodeURIComponent('https://www.alipay.com')}`;
         const qrCodeDataUrl = await QRCode.toDataURL(paymentUrl, {
             width: 300,
             margin: 2,
