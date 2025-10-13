@@ -14,6 +14,9 @@ let alipayConfig = {
     notifyUrl: 'http://localhost:3000/api/payment/callback'
 };
 
+// 测试模式开关 - 即使有真实密钥也可以强制使用测试模式
+const FORCE_TEST_MODE = true; // 设置为 true 强制使用测试模式
+
 // 尝试加载真实配置
 try {
     const envPath = path.join(__dirname, 'alipay.env');
@@ -85,8 +88,14 @@ async function queryOrder(outTradeNo) {
     try {
         console.log('🔍 查询订单状态:', outTradeNo);
         
-        // 检查是否使用真实配置
-        const isRealConfig = alipayConfig.appId !== 'test_app_id';
+        // 检查是否使用真实配置（考虑测试模式开关）
+        const isRealConfig = !FORCE_TEST_MODE && alipayConfig.appId !== 'test_app_id';
+        
+        console.log('🔧 支付模式检测:', {
+            FORCE_TEST_MODE: FORCE_TEST_MODE,
+            appId: alipayConfig.appId,
+            isRealConfig: isRealConfig
+        });
         
         if (isRealConfig) {
             // 真实支付：调用支付宝API查询订单状态
